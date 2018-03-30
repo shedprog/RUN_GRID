@@ -16,6 +16,7 @@ function replica {
     python $WORKDIR/src/analysis_py/Q_method.py right $OUTPUTDIR
 }
 
+
 function main_menu
 {
     local -a MY_ACTIONS
@@ -24,7 +25,8 @@ function main_menu
         "monte_carlo_LH_default"\
         "monte_carlo_freq"\
         "monte_carlo_LH"\
-        "analysis"
+        "LH_method"\
+        "replica"\
         "CLEAN_ALL")
 
     LABELS=("Build derivatives for SM, CI"\
@@ -32,7 +34,8 @@ function main_menu
         "Monte carlo LH (deault xFitter!) - long work"
         "Monte carlo frequency aproch <-- derivatives for SM, CI"\
         "Monte carlo LH_method <-- derivatives for SM, CI"\
-        "Analysis (Python)"\
+        "Analysis (Python) - LH_method"\
+        "Analysis (Python) - replica"
         "CLEAN_ALL")
 
     local -i I=1

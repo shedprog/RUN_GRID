@@ -118,7 +118,6 @@ if __name__ == "__main__":
 			for IREP2 in IREP2_CI:
 				try:
 					Chi2_CI, Chi2_SM = chi2_CI[IREP2_CI.index(IREP2)],chi2_SM[IREP2_SM.index(IREP2)]
-					print Chi2_SM, Chi2_CI
 					Q_mc.append(math.exp( (Chi2_SM-Chi2_CI) / 2 ))
 					# print "Chi2_SM: ", Chi2_SM, "Chi2_CI", Chi2_CI
 					# print "Q_data: ", Q_data, "Q_current: ", math.exp( (Chi2_SM-Chi2_CI) / 2 )

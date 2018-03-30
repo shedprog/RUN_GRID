@@ -115,7 +115,10 @@ function monte_carlo_freq {
 				s|INCItype=.*|INCItype='$CItype'|g ;\
 				s|INCIvarval=.*|INCIvarval=$CIvarval|g ; s|INCIvarstep=.*|INCIvarstep=$CIvarstep|g ;\
 				s|INCIDoSimpFit=.*|INCIDoSimpFit='true'|g ; s|INCISimpFitStep=.*|INCISimpFitStep='SimpFit'|g ; \
-				s|INISeedMC=.*|INISeedMC=$seed|g ; s|IREP=.*|IREP=$IREP|g ; s|IREP2=.*|IREP2=$IREP2|g\
+				s|INISeedMC=.*|INISeedMC=$seed|g ; s|IREP=.*|IREP=$IREP|g ; s|IREP2=.*|IREP2=$IREP2|g;\
+                s|INchange_CIvarval_afterMC=.*|INchange_CIvarval_afterMC=false|g;\
+                s|INCIvarval_afterMC=.*|INCIvarval_afterMC=0.0|g;\
+                s|INlRAND=.*|INlRAND=true|g \
 				" $WORKDIR/tmp_grid/batch_bird_mc.cmd > $OUTPUTDIR/RUN/run_mc/r_${IREP}/batch_${CItype}_${IREP}_${IREP2}.cmd
 				 	
 				qsub -l distro=sld6 -l h_vmem=5000M -q short.q -cwd $OUTPUTDIR/RUN/run_mc/r_${IREP}/batch_${CItype}_${IREP}_${IREP2}.cmd &
@@ -131,7 +134,7 @@ function monte_carlo_LH {
     echo '~~~~~~~~~~~~~~~ for LH method ~~~~~~~~~~~~~~~~~~'
     echo '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
 
-    remove_monte_carloLH_result
+    # remove_monte_carloLH_result
   
 	for CItype in "${models[@]}"
         do
@@ -143,7 +146,7 @@ function monte_carlo_LH {
 
 
             
-        for (( IREP=1; IREP<=$(($NUMBER_OF_STEPS*2)); IREP=$(($IREP+1)) ))
+        for (( IREP=4; IREP<=$(($NUMBER_OF_STEPS*2)); IREP=$(($IREP+1)) ))
         do
         
         		if [ "$IREP" -le "$NUMBER_OF_STEPS" ]; then 
@@ -170,7 +173,7 @@ function monte_carlo_LH {
                 s|INlRAND=.*|INlRAND=false|g \
                 " $WORKDIR/tmp_grid/batch_bird_mcLH.cmd > $OUTPUTDIR/RUN/run_mcLH/r_${IREP}/batch_DATA_${CItype}_${IREP}.cmd
              
-            qsub -l distro=sld6 -l h_vmem=5000M -q short.q -cwd $OUTPUTDIR/RUN/run_mcLH/r_${IREP}/batch_DATA_${CItype}_${IREP}.cmd &
+            qsub -l distro=sld6 -l h_rt=00:05:00 -l h_vmem=3000M -q short.q -cwd $OUTPUTDIR/RUN/run_mcLH/r_${IREP}/batch_DATA_${CItype}_${IREP}.cmd &
             for (( IREP2=1; IREP2<=$seednumber; IREP2=$(($IREP2+1)) ))
             do  
             echo $CItype $CIvarval
@@ -190,7 +193,7 @@ function monte_carlo_LH {
                 s|INlRAND=.*|INlRAND=true|g \
                 " $WORKDIR/tmp_grid/batch_bird_mcLH.cmd > $OUTPUTDIR/RUN/run_mcLH/r_${IREP}/batch_CI_${CItype}_${IREP}_${IREP2}.cmd
              
-            qsub -l distro=sld6 -l h_vmem=5000M -q short.q -cwd $OUTPUTDIR/RUN/run_mcLH/r_${IREP}/batch_CI_${CItype}_${IREP}_${IREP2}.cmd &
+            qsub -l distro=sld6 -l h_rt=00:05:00 -l h_vmem=3000M -q short.q -cwd $OUTPUTDIR/RUN/run_mcLH/r_${IREP}/batch_CI_${CItype}_${IREP}_${IREP2}.cmd &
             # Derivatives_1(CIvarval=0,CIvarstep=0)→Replica(Civarval=eta_true)→Fit(CIvarval=0,CIvarstep=0)→L_b
             sed "\
                 s|PDF_is=.*|PDF_is='SM'|g ;\
@@ -204,7 +207,7 @@ function monte_carlo_LH {
                 s|INlRAND=.*|INlRAND=true|g;\
                 " $WORKDIR/tmp_grid/batch_bird_mcLH.cmd > $OUTPUTDIR/RUN/run_mcLH/r_${IREP}/batch_SM_${CItype}_${IREP}_${IREP2}.cmd
              
-            qsub -l distro=sld6 -l h_vmem=5000M -q short.q -cwd $OUTPUTDIR/RUN/run_mcLH/r_${IREP}/batch_SM_${CItype}_${IREP}_${IREP2}.cmd &
+            qsub -l distro=sld6 -l h_rt=00:05:00 -l h_vmem=3000M -q short.q -cwd $OUTPUTDIR/RUN/run_mcLH/r_${IREP}/batch_SM_${CItype}_${IREP}_${IREP2}.cmd &
 			done
     	done		
     done 

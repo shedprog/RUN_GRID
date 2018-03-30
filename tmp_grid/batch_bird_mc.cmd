@@ -39,7 +39,7 @@ sed -i "s|lRAND = .*|lRAND = True|g" $TMPDIR/steering.txt
 ./xfitter
 
 #cp $TMPDIR/output/CIout.txt  REFOUTDIR/output/monte_carlo/CIval_in_${INCItype}_${IREP}.txt
-cp $TMPDIR/steering.txt REFOUTDIR/output/monte_carlo/steering_${INCItype}_${IREP}.txt
+#cp $TMPDIR/steering.txt REFOUTDIR/output/monte_carlo/steering_${INCItype}_${IREP}.txt
 
 RES=$(awk '{ print $3,$4 }' < output/CIout.txt)
 chis=$(grep -i 'After' output/Results.txt | awk '{print $3}')

@@ -69,7 +69,7 @@ function monte_carlo_LH_default {
     done
 }
 
-function monte_carlo_freq {
+function monte_carlo_freq() {
 	echo '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
     echo '~~~~~~~~ Monte carlo-mode was activated ~~~~~~~~'
     echo '~~~~~~~~~~~~~~~ Frequency approach ~~~~~~~~~~~~~'
@@ -83,10 +83,10 @@ function monte_carlo_freq {
 
 		CIvarstep=1.0E-07
 	
-        l_upper_lim=$(grep -i $CItype $WORKDIR/settings_limits.txt | awk '{print $3}')
-        l_lower_lim=$(grep -i $CItype $WORKDIR/settings_limits.txt | awk '{print $2}')
-        r_upper_lim=$(grep -i $CItype $WORKDIR/settings_limits.txt | awk '{print $5}')
-        r_lower_lim=$(grep -i $CItype $WORKDIR/settings_limits.txt | awk '{print $4}')
+        l_upper_lim=$(grep -i $CItype $WORKDIR/$1 | awk '{print $3}')
+        l_lower_lim=$(grep -i $CItype $WORKDIR/$1 | awk '{print $2}')
+        r_upper_lim=$(grep -i $CItype $WORKDIR/$1 | awk '{print $5}')
+        r_lower_lim=$(grep -i $CItype $WORKDIR/$1 | awk '{print $4}')
 
 		for (( IREP=1; IREP<=$(($NUMBER_OF_STEPS*2)); IREP=$(($IREP+1)) ))
 		do
@@ -127,7 +127,7 @@ function monte_carlo_freq {
 	done	
 } 
 
-function monte_carlo_LH {
+function monte_carlo_LH() {
 
     echo '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
     echo '~~~~~~~~ Monte carlo-mode was activated ~~~~~~~~'
@@ -146,10 +146,14 @@ function monte_carlo_LH {
 
 
             
-        for (( IREP=4; IREP<=$(($NUMBER_OF_STEPS*2)); IREP=$(($IREP+1)) ))
+      #  for (( IREP=0; IREP<=$(($NUMBER_OF_STEPS*2)); IREP=$(($IREP+1)) ))
+       for (( IREP=1; IREP<=$(($NUMBER_OF_STEPS*2)); IREP=$(($IREP+1)) ))
         do
         
-        		if [ "$IREP" -le "$NUMBER_OF_STEPS" ]; then 
+        		if [ "$IREP" = 0 ]; then
+                # Generate 5000 replicas for Eta_mc=0
+                    CIvarval=0.0
+                elif [ "$IREP" -le "$NUMBER_OF_STEPS" ]; then 
                     START=$l_lower_lim
 					STEP=$( echo $l_upper_lim $l_lower_lim $NUMBER_OF_STEPS | awk '{print ($1-$2)/$3}')
                     CIvarval=$( echo $STEP $IREP $START | awk '{print $1*$2+$3}')
@@ -173,13 +177,14 @@ function monte_carlo_LH {
                 s|INlRAND=.*|INlRAND=false|g \
                 " $WORKDIR/tmp_grid/batch_bird_mcLH.cmd > $OUTPUTDIR/RUN/run_mcLH/r_${IREP}/batch_DATA_${CItype}_${IREP}.cmd
              
-            qsub -l distro=sld6 -l h_rt=00:05:00 -l h_vmem=3000M -q short.q -cwd $OUTPUTDIR/RUN/run_mcLH/r_${IREP}/batch_DATA_${CItype}_${IREP}.cmd &
+            qsub -l distro=sld6 -l h_vmem=5000M -q short.q -cwd $OUTPUTDIR/RUN/run_mcLH/r_${IREP}/batch_DATA_${CItype}_${IREP}.cmd &
             for (( IREP2=1; IREP2<=$seednumber; IREP2=$(($IREP2+1)) ))
             do  
             echo $CItype $CIvarval
              
             seed=$(echo $seedstart $seedstep $IREP $IREP2 | awk '{print $1+$2*(($3-1)*5000+$4)}')
                    while  [ $(qstat -s p | wc -l) -gt 20000 ]; do sleep 1;echo '.'; done 
+            
             #Derivatives_2(CIvarval=0, CIvarstep=10^-7)→Replica(Civarval=eta_true)→Fit(CIvarval=eta_true,CIvarstep=0)→L_s+b
             sed "\
                 s|PDF_is=.*|PDF_is='CI'|g ;\
@@ -193,7 +198,8 @@ function monte_carlo_LH {
                 s|INlRAND=.*|INlRAND=true|g \
                 " $WORKDIR/tmp_grid/batch_bird_mcLH.cmd > $OUTPUTDIR/RUN/run_mcLH/r_${IREP}/batch_CI_${CItype}_${IREP}_${IREP2}.cmd
              
-            qsub -l distro=sld6 -l h_rt=00:05:00 -l h_vmem=3000M -q short.q -cwd $OUTPUTDIR/RUN/run_mcLH/r_${IREP}/batch_CI_${CItype}_${IREP}_${IREP2}.cmd &
+            qsub -l distro=sld6 -l h_vmem=5000M -q short.q -cwd $OUTPUTDIR/RUN/run_mcLH/r_${IREP}/batch_CI_${CItype}_${IREP}_${IREP2}.cmd &
+            
             # Derivatives_1(CIvarval=0,CIvarstep=0)→Replica(Civarval=eta_true)→Fit(CIvarval=0,CIvarstep=0)→L_b
             sed "\
                 s|PDF_is=.*|PDF_is='SM'|g ;\
@@ -207,8 +213,10 @@ function monte_carlo_LH {
                 s|INlRAND=.*|INlRAND=true|g;\
                 " $WORKDIR/tmp_grid/batch_bird_mcLH.cmd > $OUTPUTDIR/RUN/run_mcLH/r_${IREP}/batch_SM_${CItype}_${IREP}_${IREP2}.cmd
              
-            qsub -l distro=sld6 -l h_rt=00:05:00 -l h_vmem=3000M -q short.q -cwd $OUTPUTDIR/RUN/run_mcLH/r_${IREP}/batch_SM_${CItype}_${IREP}_${IREP2}.cmd &
+            qsub -l distro=sld6 -l h_vmem=5000M -q short.q -cwd $OUTPUTDIR/RUN/run_mcLH/r_${IREP}/batch_SM_${CItype}_${IREP}_${IREP2}.cmd &
 			done
+
+
     	done		
     done 
 }

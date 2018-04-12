@@ -23,7 +23,8 @@ function main_menu
     MY_ACTIONS=("build_deriv"\
         "simpfit"\
         "monte_carlo_LH_default"\
-        "monte_carlo_freq"\
+        "monte_carlo_freq settings_limits.txt"\
+        "monte_carlo_freq settings_explimits.txt"\
         "monte_carlo_LH"\
         "LH_method"\
         "replica"\
@@ -33,6 +34,7 @@ function main_menu
         "Simplified fit <-- derivatives for SM, CI"\
         "Monte carlo LH (deault xFitter!) - long work"
         "Monte carlo frequency aproch <-- derivatives for SM, CI"\
+        "Monte carlo frequency aproch EXPECTED LIMS <-- derivatives for SM, CI"\
         "Monte carlo LH_method <-- derivatives for SM, CI"\
         "Analysis (Python) - LH_method"\
         "Analysis (Python) - replica"

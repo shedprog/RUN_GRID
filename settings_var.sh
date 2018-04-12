@@ -1,4 +1,3 @@
-
 # All global variables and enviroments
 export WORKDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 export OUTPUTDIR="/nfs/dust/zeus/group/mykytaua/OUTPUT_X1"

@@ -79,6 +79,25 @@ if __name__ == "__main__":
     print len(hist_Qdata)
     leng = len(hist_Qdata)
     # fig = plt.figure()
+    
+    print int('%d%d%d' % (2,3,1+1))
+    
+    plt.subplot(int('%d%d%d' % (1,1,1)))
+    
+    plt.axvline(x=hist_Qdata[1],color='y')
+    
+    plt.hist(hist_Q[1], 80, alpha = 0.8, lw=3,range=(0,100))
+    
+    # ax.text(3, 8, r'\eta_{true}: %s' % hist_eta[i], style='italic',
+    
+    # bbox={'facecolor':'red', 'alpha':0.5, 'pad':10})
+    
+    # plt.xlabel('log(Q_mc), %s' % hist_eta[i])
+    
+    plt.ylabel('%s' % hist_eta[1])
+
+    plt.show()
+
     for i in range(leng-1):
         print int('%d%d%d' % (2,3,i+1))
         plt.subplot(int('%d%d%d' % (3,3,i+1)))

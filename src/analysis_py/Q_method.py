@@ -7,7 +7,6 @@ from scipy.special import erf
 import numpy as np
 import math, sys, os, re
 
-CIvarval = 4.03674E-08
 
 def function(x, a, b, c):
 	"""This function is exponent 
@@ -80,8 +79,17 @@ if __name__ == "__main__":
 	"""
 	file_SM = open('%s/output/simpfit/RESULTS_SM.txt' % WORKDIR)
 	a = re.findall(r'[+-]?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?',file_SM.readline())
-	chi2_DATA_0 = float(a[0]) 
+	chi2_DATA_0 = float(a[0])
 	file_SM.close()
+
+	"""
+	This part CIvarval, from:
+	./simpfit/RESULTS_SM.txt 
+	"""
+	file_CI = open('%s/output/simpfit/RESULTS_CI.txt' % WORKDIR)
+	a = re.findall(r'[+-]?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?|^\w+',file_CI.readline())
+	CIvarval = float(a[2]) 
+	file_CI.close()
 
 	print "chi2_SM: ",chi2_DATA_0
 

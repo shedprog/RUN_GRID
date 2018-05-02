@@ -134,7 +134,7 @@ function monte_carlo_LH() {
     echo '~~~~~~~~~~~~~~~ for LH method ~~~~~~~~~~~~~~~~~~'
     echo '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
 
-    # remove_monte_carloLH_result
+    remove_monte_carloLH_result
   
 	for CItype in "${models[@]}"
         do

@@ -6,6 +6,7 @@ from scipy.optimize import curve_fit
 from scipy.special import erf
 import numpy as np
 import math, sys, os, re
+import ROOT
 
 def function(x, a, b, c):
 	'''This function is exponent 
@@ -55,10 +56,10 @@ if __name__ == "__main__":
 	"""
 	file_CI = open('%s/output/simpfit/RESULTS_CI.txt' % WORKDIR)
 	a = re.findall(r'[+-]?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?|^\w+',file_CI.readline())
-	# CIvarval = float(a[2]) 
+	CIvarval = float(a[2]) 
 	file_CI.close()
-
-	CIvarval=0.0
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`change here for expected`
+	# CIvarval=0.0
 
 	'''This part initiate variables'''
 	probability=[]
@@ -105,7 +106,17 @@ if __name__ == "__main__":
 		markerfacecolor='k', markersize=5,elinewidth=2)
 	plt.xlabel(r'$\eta_{True} [GeV]$')
 	plt.ylabel(r'$Prob(\eta^{Fit}<\eta^{Dara})(\%)$')
-	plt.title('AA model')
+	plt.title('VV model')
 	plt.text(60, .025, r'$\mu=100,\ \sigma=15$')
 	plt.grid(True)
+	plt.ticklabel_format(style='sci',axis='x',scilimits=(0,0))
+	plt.savefig('%s/%s' % (WORKDIR,CL_SIDE))
+
+	# text = ROOT.TLatex()
+	# text.SetTextSize(0.03)
+	# x = .5 if LIMIT == "right" else .15
+	# text.DrawLatexNDC(x, .8+.04, "#color[2]{95% C. L. Limit:}")
+	# text.DrawLatexNDC(x, .8, "#eta = " + "%.2le" % _eta + " [GeV^{-2}]")
+	# text.DrawLatexNDC(x, .8-.035, "#Lambda^{" + ('+' if LIMIT == 'right' else '-') + "} = " + "%.2le" % _lambda + " [TeV]")
+
 	plt.show()

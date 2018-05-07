@@ -12,8 +12,8 @@ function LH_method {
 }
 
 function replica {
-    python $WORKDIR/src/analysis_py/build_.py left $OUTPUTDIR
-    python $WORKDIR/src/analysis_py/Q_method.py right $OUTPUTDIR
+    python $WORKDIR/src/analysis_py/replica_new.py left $OUTPUTDIR
+    python $WORKDIR/src/analysis_py/replica_new.py right $OUTPUTDIR
 }
 
 

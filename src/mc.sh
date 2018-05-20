@@ -95,12 +95,12 @@ function monte_carlo_freq() {
 
 		if [ "$IREP" -le "$NUMBER_OF_STEPS" ]; then 
 			START=$l_lower_lim
-			STEP=$( echo $l_upper_lim $l_lower_lim $NUMBER_OF_STEPS | awk '{print ($1-$2)/$3}')
-			CIvarval=$( echo $STEP $IREP $START | awk '{print $1*$2+$3}')
+			STEP=$( echo $l_upper_lim $l_lower_lim $NUMBER_OF_STEPS | awk '{print ($1-$2)/($3-1)}')
+			CIvarval=$( echo $STEP $IREP $START | awk '{print $1*($2-1)+$3}')
         else
 			START=$r_lower_lim
-			STEP=$( echo $r_upper_lim $r_lower_lim $NUMBER_OF_STEPS | awk '{print ($1-$2)/$3}')
-			CIvarval=$( echo $STEP $IREP $START $NUMBER_OF_STEPS | awk '{print $1*($2-$4)+$3}')
+			STEP=$( echo $r_upper_lim $r_lower_lim $NUMBER_OF_STEPS | awk '{print ($1-$2)/($3-1)}')
+			CIvarval=$( echo $STEP $IREP $START $NUMBER_OF_STEPS | awk '{print $1*($2-1-$4)+$3}')
 		fi
 
 			for (( IREP2=1; IREP2<=$seednumber; IREP2=$(($IREP2+1)) ))

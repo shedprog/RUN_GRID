@@ -75,7 +75,15 @@ function monte_carlo_freq() {
     echo '~~~~~~~~~~~~~~~ Frequency approach ~~~~~~~~~~~~~'
     echo '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~' 
   
-    remove_monte_carlo_result
+    
+    echo "Do you want to delete MC generated results? (Y/n)"
+    echo "Press Y to create the clean folder for data"
+    read 
+    if [[ $REPLY =~ ^[Yy]$ ]]
+    then
+        # do dangerous stuff
+        remove_monte_carlo_result
+    fi
 
 	for CItype in "${models[@]}"
 
@@ -92,6 +100,9 @@ function monte_carlo_freq() {
 		do
 		
         mkdir -p $OUTPUTDIR/RUN/run_mc/r_${IREP}
+        
+        # Check the number of submited jobs (should not be more than 5k)
+        while  [ $(condor_q | awk '/Total for query:/{print $10}') -gt 10000 ]; do sleep 1;echo '.'; done 
 
 		if [ "$IREP" -le "$NUMBER_OF_STEPS" ]; then 
 			START=$l_lower_lim
@@ -103,13 +114,20 @@ function monte_carlo_freq() {
 			CIvarval=$( echo $STEP $IREP $START $NUMBER_OF_STEPS | awk '{print $1*($2-1-$4)+$3}')
 		fi
 
+            # This variable was generated to save results for different runs of this soft in different files
+            # Because IRAND and SEED and other things will be the same
+            RANDOMIZE=$((RANDOM))
+
 			for (( IREP2=1; IREP2<=$seednumber; IREP2=$(($IREP2+1)) ))
 			do	
 				echo $CItype $CIvarval	
 
 				seed=$(echo $seedstart $seedstep $IREP $IREP2 | awk '{print $1+$2*(($3-1)*5000+$4)}')
 			
-		       	while  [ $(qstat -s p | wc -l) -gt 20000 ]; do sleep 1;echo '.'; done 
+		       	# while  [ $(qstat -s p | wc -l) -gt 20000 ]; do sleep 1;echo '.'; done 
+
+                # Check the number of threded jobs should not be more than 30
+                while [ $(jobs | wc -l) -ge 40 ] ; do sleep 1 ; done
 									
 				sed "s|REFWORKDIR|$WORKDIR|g ; s|REFOUTDIR|$OUTPUTDIR|g ;\
 				s|INCItype=.*|INCItype='$CItype'|g ;\
@@ -118,10 +136,11 @@ function monte_carlo_freq() {
 				s|INISeedMC=.*|INISeedMC=$seed|g ; s|IREP=.*|IREP=$IREP|g ; s|IREP2=.*|IREP2=$IREP2|g;\
                 s|INchange_CIvarval_afterMC=.*|INchange_CIvarval_afterMC=false|g;\
                 s|INCIvarval_afterMC=.*|INCIvarval_afterMC=0.0|g;\
-                s|INlRAND=.*|INlRAND=true|g \
+                s|INlRAND=.*|INlRAND=true|g; \
+                s|randomize=.*|randomize=$RANDOMIZE|g \
 				" $WORKDIR/tmp_grid/batch_bird_mc.cmd > $OUTPUTDIR/RUN/run_mc/r_${IREP}/batch_${CItype}_${IREP}_${IREP2}.cmd
 				 	
-				qsub -l distro=sld6 -l h_vmem=5000M -q short.q -cwd $OUTPUTDIR/RUN/run_mc/r_${IREP}/batch_${CItype}_${IREP}_${IREP2}.cmd &
+				condor_qsub -l distro=sld6 -l h_vmem=5000M -q short.q -cwd $OUTPUTDIR/RUN/run_mc/r_${IREP}/batch_${CItype}_${IREP}_${IREP2}.cmd &
 			done
 		done
 	done	
@@ -149,6 +168,9 @@ function monte_carlo_LH() {
       #  for (( IREP=0; IREP<=$(($NUMBER_OF_STEPS*2)); IREP=$(($IREP+1)) ))
        for (( IREP=1; IREP<=$(($NUMBER_OF_STEPS*2)); IREP=$(($IREP+1)) ))
         do
+
+                # Check the number of submited jobs (should not be more than 5k)
+                while  [ $(condor_q | awk '/Total for query:/{print $10}') -gt 20000 ]; do sleep 1;echo '.'; done 
         
         		if [ "$IREP" = 0 ]; then
                 # Generate 5000 replicas for Eta_mc=0
@@ -183,7 +205,10 @@ function monte_carlo_LH() {
             echo $CItype $CIvarval
              
             seed=$(echo $seedstart $seedstep $IREP $IREP2 | awk '{print $1+$2*(($3-1)*5000+$4)}')
-                   while  [ $(qstat -s p | wc -l) -gt 20000 ]; do sleep 1;echo '.'; done 
+            
+
+            # Check the number of threded jobs should not be more than 30
+            while [ $(jobs | wc -l) -ge 40 ] ; do sleep 1 ; done
             
             #Derivatives_2(CIvarval=0, CIvarstep=10^-7)→Replica(Civarval=eta_true)→Fit(CIvarval=eta_true,CIvarstep=0)→L_s+b
             sed "\

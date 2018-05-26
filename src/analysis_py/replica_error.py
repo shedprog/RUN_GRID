@@ -29,8 +29,8 @@ def estimate_par_exp(probability, eta_true):
 	'''Thid function estimate best 
 	parametrs for sucsesfull exp fit'''
 
-	x1, x2 = min(eta_true), max(eta_true)
-	y1, y2 = 20*min(probability), 20*max(probability)
+	x1, x2 = eta_true[0], eta_true[-1]
+	y1, y2 = 20*probability[0], 20*probability[-1]
 
 	A = x1 * math.log(y2) - x2 * math.log(y1) 
 	A = A / (math.log(y2) - math.log(y1))
@@ -49,11 +49,12 @@ def read_to_array(file):
 	for line in f:
 		try:
 			a = re.findall(r'[+-]?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?|^\w+',line)
-			if sys.argv[1] == 'right':
+			# len(a) == 6 to skip the 
+			if sys.argv[1] == 'right' and len(a) == 6:
 				if float(a[2])>CIvarval:
 					eta_true.append(float(a[2]))
 					eta.append(float(a[3]))
-			if sys.argv[1] == 'left':
+			if sys.argv[1] == 'left' and len(a) == 6:
 				if float(a[2])<CIvarval:
 					eta_true.append(float(a[2]))
 					eta.append(float(a[3]))
@@ -73,10 +74,11 @@ if __name__ == "__main__":
 		print "Please, put 'right' or 'left' as an argument"
 		sys.exit()
 
-	model="VV"
+	
 	CL_SIDE=sys.argv[1]         # right or left
 	LIMIT_SETTING=sys.argv[2]   # measured or expected
 	WORKDIR=sys.argv[3]         # PATH/TO/OUTPUT
+	model=sys.argv[4]
 
 	# This part define CIvarval for the analysis of P(R<R_data)
 	if (LIMIT_SETTING == 'measured'):
@@ -116,19 +118,6 @@ if __name__ == "__main__":
 	# Estimate parametrs for exponentia
 	A, B = estimate_par_exp(probability, eta_true)
 
-	# # Exponential fit using python framework
-	# best_vals = [A, B] 
-	# best_vals, covar = curve_fit(function, eta_true,probability,
-	# 	sigma=error, p0=best_vals)
-
-	# vals_errors = np.sqrt(np.diag(covar))
-
-	# eta_error = vals_errors[0]
-	# # B_error = vals_errors[1]
-
-	# Lambda = math.sqrt(4*math.pi/abs(A))
-	# Lambda_er = math.sqrt(math.pi/abs(A**3))*eta_error
-
 	# Exponential fit with ROOT framework
 
 	graph = ROOT.TGraphErrors()
@@ -143,14 +132,14 @@ if __name__ == "__main__":
 	eta = func.GetParameter(0)
 	eta_error = func.GetParError(0)
 
-	Lambda = math.sqrt(4*math.pi/abs(eta))
-	Lambda_er = math.sqrt(math.pi/abs(eta**3))*eta_error
+	Lambda = math.sqrt(4*math.pi/abs(eta))/1000
+	Lambda_er = math.sqrt(math.pi/abs(eta**3))*eta_error/1000
 
 
 	canvas = ROOT.TCanvas("name", "Contact Interactions analysis", 1524, 800)
-	graph.GetXaxis().SetTitle('#eta_{True} [TeV]')
+	graph.GetXaxis().SetTitle('#eta_{True} [GeV]')
 	graph.GetYaxis().SetTitle('Prob(#eta^{Fit} < #eta^{Data}) [%]')
-	graph.SetTitle('%s model' % model)
+	graph.SetTitle("%s - %s" % (model,LIMIT_SETTING) )
 	graph.SetLineColor(1)
 	graph.SetLineWidth(1)
 	graph.SetMarkerColor(9)
@@ -170,41 +159,14 @@ if __name__ == "__main__":
 	L.SetFillColor(0)
 	L.AddEntry(graph,"monte carlo results")
 	L.AddEntry(func,"exponential fit")
-	L.AddEntry("", "#eta = " + "%.2le" % eta + " [TeV^{-2}]    ","")
-	L.AddEntry("", "#Delta#eta = " + "%.2le" % eta_error + " [TeV^{-2}]    ","")
+	L.AddEntry("", "#eta = " + "%.2le" % eta + " GeV^{-2}    ","")
+	L.AddEntry("", "#Delta#eta = " + "%.2le" % eta_error + " GeV^{-2}    ","")
 	L.AddEntry("","#Lambda^{" + ('+' if CL_SIDE == 'right' else '-') + "} = "
-	 		 + "%.2le" % Lambda + " [TeV]    ","")
+	 		 + "%.2f" % Lambda + " TeV    ","")
 	L.AddEntry("","#Delta#Lambda^{" + ('+' if CL_SIDE == 'right' else '-') + "} = "
-	 		 + "%.2le" % Lambda_er + " [TeV]    ","")
-
+	 		 + "%.2f" % Lambda_er + " TeV    ","")
 	L.Draw("Same")
 
+	canvas.SaveAs("%s/%s_%s_%s.pdf" % (WORKDIR,model,CL_SIDE,LIMIT_SETTING) )
 
 	raw_input("Warning: press to quite")
-
-	# # Build exponent for plot
-	# x = linspace(min(eta_true),max(eta_true),300)
-	# y = function(x, best_vals[0],best_vals[1])
-
-	# # Find 5% C.L. value (it is equal to A parametr)
-	# print "5% \eta = ", A, " +- ", str(eta_error)," TeV^-2"
-	# print "5% \Lamda = ", Lambda," +- ",Lambda_er," TeV"
-	# print "relative error = ", Lambda_er/Lambda*100,"%"
-	# print "Central value = ", CIvarval
-
-
-	# #Plot exponent for x,y and results woth error
-	# fig, ax = plt.subplots()
-	# plt.plot(x,y)
-	# ax.errorbar(eta_true, probability,
-	# 	yerr=error,linestyle='',marker='o',
-	# 	markerfacecolor='k', markersize=5,elinewidth=1.3,
-	# 	fmt='--o')
-	# plt.xlabel(r'$\eta_{True} [GeV]$')
-	# plt.ylabel(r'$Prob(\eta^{Fit}<\eta^{Dara})(\%)$')
-	# plt.title('VV model')
-	# plt.text(60, .025, r'$\mu=100,\ \sigma=15$')
-	# plt.grid(True)
-	# plt.ticklabel_format(style='sci',axis='x',scilimits=(0,0))
-	# plt.savefig('%s/%s' % (WORKDIR,CL_SIDE))
-	# plt.show()

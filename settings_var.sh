@@ -1,10 +1,10 @@
 # All global variables and enviroments
 export WORKDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-export OUTPUTDIR="/nfs/dust/zeus/group/mykytaua/ALL14"
+export OUTPUTDIR="/nfs/dust/zeus/group/mykytaua/14p/OUTPUT_AA"
 #export OUTPUTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-# models=( "RR" "LL" "VV" "VA" "AA" "X1" "X2" "X3" "X4" )
-models=( "X6" )
+#models=( "RR" "LL" "VV" "VA" "AA" "X1" "X2" "X3" "X4" )
+models=( "AA" )
 NUMBER_OF_STEPS=10
 seedstart=1100011
 seedstep=13
-seednumber=5000
+seednumber=2000

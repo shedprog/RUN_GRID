@@ -16,28 +16,51 @@ function replica {
     python $WORKDIR/src/analysis_py/replica_new.py right $OUTPUTDIR
 }
 
+function replica_ROOT {
+    python ./src/analysis_py/replica_error.py left $1 $OUTPUTDIR $model &
+    python ./src/analysis_py/replica_error.py right $1 $OUTPUTDIR $model
+}
+
 
 function main_menu
 {
     local -a MY_ACTIONS
+    # MY_ACTIONS=("build_deriv"\
+    #     "simpfit"\
+    #     "monte_carlo_LH_default"\
+    #     "monte_carlo_freq settings_limits.txt"\
+    #     "monte_carlo_freq settings_explimits.txt"\
+    #     "monte_carlo_LH"\
+    #     "LH_method"\
+    #     "replica"\
+    #     "CLEAN_ALL")
+
+    # LABELS=("Build derivatives for SM, CI"\
+    #     "Simplified fit <-- derivatives for SM, CI"\
+    #     "Monte carlo LH (deault xFitter!) - long work"
+    #     "Monte carlo frequency aproch <-- derivatives for SM, CI"\
+    #     "Monte carlo frequency aproch EXPECTED LIMS <-- derivatives for SM, CI"\
+    #     "Monte carlo LH_method <-- derivatives for SM, CI"\
+    #     "Analysis (Python) - LH_method"\
+    #     "Analysis (Python) - replica"
+    #     "CLEAN_ALL")
+
+    # The name of the functions to call
     MY_ACTIONS=("build_deriv"\
         "simpfit"\
-        "monte_carlo_LH_default"\
         "monte_carlo_freq settings_limits.txt"\
         "monte_carlo_freq settings_explimits.txt"\
-        "monte_carlo_LH"\
-        "LH_method"\
         "replica"\
+        # "replica_ROOT measured"\
+        # "replica_ROOT expected"\
         "CLEAN_ALL")
-
+    # The name of the names of the functions to call
     LABELS=("Build derivatives for SM, CI"\
         "Simplified fit <-- derivatives for SM, CI"\
-        "Monte carlo LH (deault xFitter!) - long work"
         "Monte carlo frequency aproch <-- derivatives for SM, CI"\
         "Monte carlo frequency aproch EXPECTED LIMS <-- derivatives for SM, CI"\
-        "Monte carlo LH_method <-- derivatives for SM, CI"\
-        "Analysis (Python) - LH_method"\
-        "Analysis (Python) - replica"
+        "Analysis"\
+        # "Analysis - expected"\
         "CLEAN_ALL")
 
     local -i I=1

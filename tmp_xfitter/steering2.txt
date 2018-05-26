@@ -397,7 +397,7 @@
 
 	! 'ContAlph' : use function from "src/CI_models.f"
 	! 'aemrun'   :              from "EW/src/formff.f"
-            CIalphaemrun_func = 'aemrun'
+            CIalphaemrun_func = 'ContAlph'
 
   ! CI variable value and step
 	CIvarval = 0.0 
@@ -405,5 +405,8 @@
 
   CIDoSimpFit = true
   CISimpFitStep = 'SimpFit'
+  
+  change_CIvarval_afterMC = false
+  CIvarval_afterMC = 0.0
 
 &End

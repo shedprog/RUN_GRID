@@ -23,11 +23,11 @@ def read_to_array(file):
 	for line in f:
 		try:
 			a = re.findall(r'[+-]?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?|^\w+',line)
-			if sys.argv[1] == 'right':
+			if sys.argv[1] == 'right' and len(a)>=6:
 				if float(a[2])>CIvarval:
 					eta_true.append(float(a[2]))
 					eta.append(float(a[3]))
-			if sys.argv[1] == 'left':
+			if sys.argv[1] == 'left'and len(a)>=6:
 				if float(a[2])<CIvarval:
 					eta_true.append(float(a[2]))
 					eta.append(float(a[3]))

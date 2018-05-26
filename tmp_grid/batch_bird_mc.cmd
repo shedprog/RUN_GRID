@@ -25,6 +25,7 @@ INCIvarstep=1.0E-06
 IREP=1
 IREP2=1
 INISeedMC=11000111
+randomize=RANDOM
 
 cp REFOUTDIR/output/derivatives/CIDerivatives_CI_${INCItype}.txt ./CIDerivatives.txt
 
@@ -44,7 +45,7 @@ sed -i "s|lRAND = .*|lRAND = True|g" $TMPDIR/steering.txt
 RES=$(awk '{ print $3,$4 }' < output/CIout.txt)
 chis=$(grep -i 'After' output/Results.txt | awk '{print $3}')
 status=$(grep -ir -E 'STATUS=CONVERGED|STATUS=FAILED' | awk '{print $6}')
-echo $INCItype $chis $INCIvarval $RES $status>> REFOUTDIR/output/monte_carlo/RESULTS_${INCItype}_${IREP}.txt
+echo $INCItype $chis $INCIvarval $RES $status>> REFOUTDIR/output/monte_carlo/RESULTS_${INCItype}_${IREP}_${randomize}.txt
 
 #Warning: Clean!
 rm REFOUTDIR/bird_info_out/bird_out_mc/err/*

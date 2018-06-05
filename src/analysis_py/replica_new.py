@@ -47,21 +47,24 @@ if __name__ == "__main__":
 		print "Please, put 'right' or 'left' as an argument"
 		sys.exit()
 
-	CL_SIDE=sys.argv[1]
-	WORKDIR=sys.argv[2]
+	CL_SIDE=sys.argv[1]         # right or left
+	LIMIT_SETTING=sys.argv[2]   # measured or expected
+	WORKDIR=sys.argv[3]         # PATH/TO/OUTPUT
+	model=sys.argv[4]
 
-	"""
-	This part CIvarval, from:
-	./simpfit/RESULTS_SM.txt 
-	"""
-	file_CI = open('%s/output/simpfit/RESULTS_CI.txt' % WORKDIR)
-	a = re.findall(r'[+-]?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?|^\w+',file_CI.readline())
-	CIvarval = float(a[2]) 
-	file_CI.close()
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`change here for expected`
-	# CIvarval=0.0
-
+	# This part define CIvarval for the analysis of P(R<R_data)
+	if (LIMIT_SETTING == 'measured'):
+		file_CI = open('%s/output/simpfit/RESULTS_CI.txt' % WORKDIR)
+		a = re.findall(r'[+-]?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?|^\w+',file_CI.readline())
+		CIvarval = float(a[2])
+		file_CI.close()
+	elif (LIMIT_SETTING == 'expected'):
+		CIvarval = 0.0
+	else:
+		print "Error: wrong second <measured/expected> argument"
+		sys.exit()
 	'''This part initiate variables'''
+
 	probability=[]
 	eta_true=[]
 	error=[]
@@ -106,7 +109,7 @@ if __name__ == "__main__":
 		markerfacecolor='k', markersize=5,elinewidth=2)
 	plt.xlabel(r'$\eta_{True} [GeV]$')
 	plt.ylabel(r'$Prob(\eta^{Fit}<\eta^{Dara})(\%)$')
-	plt.title('VV model')
+	plt.title('%s %s' % (model,LIMIT_SETTING))
 	plt.text(60, .025, r'$\mu=100,\ \sigma=15$')
 	plt.grid(True)
 	plt.ticklabel_format(style='sci',axis='x',scilimits=(0,0))

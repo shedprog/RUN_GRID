@@ -44,8 +44,8 @@ sed -i "s|lRAND = .*|lRAND = True|g" $TMPDIR/steering.txt
 
 RES=$(awk '{ print $3,$4 }' < output/CIout.txt)
 chis=$(grep -i 'After' output/Results.txt | awk '{print $3}')
-status=$(grep -ir -E 'STATUS=CONVERGED|STATUS=FAILED' | awk '{print $6}')
-echo $INCItype $chis $INCIvarval $RES $status>> REFOUTDIR/output/monte_carlo/RESULTS_${INCItype}_${IREP}_${randomize}.txt
+status=$(grep -ir -E 'STATUS=CONVERGED|STATUS=FAILED' output/minuit.out.txt | awk '{print $5}')
+echo $INCItype $chis $INCIvarval $RES $status $INISeedMC >> REFOUTDIR/output/monte_carlo/RESULTS_${INCItype}_${IREP}_${randomize}.txt
 
 #Warning: Clean!
 rm REFOUTDIR/bird_info_out/bird_out_mc/err/*

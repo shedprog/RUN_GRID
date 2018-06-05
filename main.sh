@@ -6,19 +6,21 @@ source src/clean.sh
 source src/derivative.sh
 source src/mc.sh
 
-function LH_method {
-    python $WORKDIR/src/analysis_py/Q_method.py left $OUTPUTDIR
-    python $WORKDIR/src/analysis_py/Q_method.py right $OUTPUTDIR
-}
+# function LH_method {
+#     python $WORKDIR/src/analysis_py/Q_method.py left $OUTPUTDIR
+#     python $WORKDIR/src/analysis_py/Q_method.py right $OUTPUTDIR
+# }
 
 function replica {
-    python $WORKDIR/src/analysis_py/replica_new.py left $OUTPUTDIR
-    python $WORKDIR/src/analysis_py/replica_new.py right $OUTPUTDIR
+    echo $OUTPUTDIR
+    python $WORKDIR/src/analysis_py/replica_new.py left $1 $OUTPUTDIR $models
+    python $WORKDIR/src/analysis_py/replica_new.py right $1 $OUTPUTDIR $models
 }
 
 function replica_ROOT {
-    python ./src/analysis_py/replica_error.py left $1 $OUTPUTDIR $model &
-    python ./src/analysis_py/replica_error.py right $1 $OUTPUTDIR $model
+    echo $OUTPUTDIRs
+    python ./src/analysis_py/replica_error.py left $1 $OUTPUTDIR $models &
+    python ./src/analysis_py/replica_error.py right $1 $OUTPUTDIR $models
 }
 
 
@@ -50,17 +52,19 @@ function main_menu
         "simpfit"\
         "monte_carlo_freq settings_limits.txt"\
         "monte_carlo_freq settings_explimits.txt"\
-        "replica"\
+        "replica measured"\
+        "replica expected"\
         # "replica_ROOT measured"\
         # "replica_ROOT expected"\
         "CLEAN_ALL")
+        
     # The name of the names of the functions to call
     LABELS=("Build derivatives for SM, CI"\
         "Simplified fit <-- derivatives for SM, CI"\
         "Monte carlo frequency aproch <-- derivatives for SM, CI"\
         "Monte carlo frequency aproch EXPECTED LIMS <-- derivatives for SM, CI"\
-        "Analysis"\
-        # "Analysis - expected"\
+        "Analysis - measured"\
+        "Analysis - expected"\
         "CLEAN_ALL")
 
     local -i I=1

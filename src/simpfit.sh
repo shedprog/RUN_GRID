@@ -23,7 +23,7 @@ function simpfit {
             s|INchange_CIvarval_afterMC=.*|INchange_CIvarval_afterMC=false|g\
             " $WORKDIR/tmp_grid/batch_bird_sf.cmd > $OUTPUTDIR/RUN/run_sf/batch_CI_${CItype}.cmd
 
-        qsub -l distro=sld6 -l h_vmem=5000M -q short.q -cwd $OUTPUTDIR/RUN/run_sf/batch_CI_${CItype}.cmd &
+        condor_qsub -l distro=sld6 -l h_vmem=5000M -q short.q -cwd $OUTPUTDIR/RUN/run_sf/batch_CI_${CItype}.cmd &
 
         CIvarval=0.0
         CIvarstep=0.0
@@ -36,7 +36,7 @@ function simpfit {
             s|INchange_CIvarval_afterMC=.*|INchange_CIvarval_afterMC=false|g\
             " $WORKDIR/tmp_grid/batch_bird_sf.cmd > $OUTPUTDIR/RUN/run_sf/batch_SM_${CItype}.cmd
 
-        qsub -l distro=sld6 -l h_vmem=5000M -q short.q -cwd $OUTPUTDIR/RUN/run_sf/batch_SM_${CItype}.cmd
+        condor_qsub -l distro=sld6 -l h_vmem=5000M -q short.q -cwd $OUTPUTDIR/RUN/run_sf/batch_SM_${CItype}.cmd
 
     done
 }

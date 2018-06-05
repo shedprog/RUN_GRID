@@ -11,7 +11,7 @@ import ROOT
 # To run this code run it with command:
 # > python <this code> <left/right> <measured/expected> <PATH TO RESULTS>
 # in <PATH  TO RESULTS> has to be folders: "output"-folder (in output:)
-# output: "monte_catlo", "simpfit"
+# input: "monte_catlo", "simpfit"
 
 def function(x, A, B):
 	'''This function is exponent 
@@ -32,6 +32,10 @@ def estimate_par_exp(probability, eta_true):
 	x1, x2 = eta_true[0], eta_true[-1]
 	y1, y2 = 20*probability[0], 20*probability[-1]
 
+	# if 0 we will have error in logarifm:
+	y1 = (1e-3 if y1==0.0 else y1)
+	y2 = (1e-3 if y2==0.0 else y2)
+
 	A = x1 * math.log(y2) - x2 * math.log(y1) 
 	A = A / (math.log(y2) - math.log(y1))
 
@@ -49,18 +53,20 @@ def read_to_array(file):
 	for line in f:
 		try:
 			a = re.findall(r'[+-]?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?|^\w+',line)
-			# len(a) == 6 to skip the 
-			if sys.argv[1] == 'right' and len(a) == 6:
+			# len(a) == 6 to skip the
+			if sys.argv[1] == 'right' and ( len(a) == 7 or len(a) == 6 ):
+				# print a 
 				if float(a[2])>CIvarval:
 					eta_true.append(float(a[2]))
 					eta.append(float(a[3]))
-			if sys.argv[1] == 'left' and len(a) == 6:
+			if sys.argv[1] == 'left' and ( len(a) == 7 or len(a) == 6 ):
 				if float(a[2])<CIvarval:
 					eta_true.append(float(a[2]))
 					eta.append(float(a[3]))
 		except:
 			pass
-	f.close() 
+	f.close()
+	# print eta
 	return eta_true,eta
 
 if __name__ == "__main__":
@@ -103,18 +109,31 @@ if __name__ == "__main__":
 	for file in files:
 		try:
 			eta_true_arr,eta = read_to_array('%s/output/monte_carlo/%s' % (WORKDIR, file))
-			eta_true.append(eta_true_arr[0])
-			if sys.argv[1] == 'right':
+			eta_true_one = eta_true_arr[3]
+
+			# print file, eta_true_arr, eta
+			# raw_input("Warning: press to quite")
+			# cut = eta_true_one > -0.6E-6 and eta_true_one < -0.3E-6
+			cut = True
+			# print cut
+			
+			if sys.argv[1] == 'right' and cut:
 				p_temp = sum(i < CIvarval for i in eta)/float(len(eta))
 				probability.append(p_temp)
-			elif sys.argv[1] == 'left':
+				error.append(sqrt((1-p_temp)*p_temp/len(eta)))
+				eta_true.append(eta_true_one)
+			elif sys.argv[1] == 'left' and cut:
 				p_temp = sum(i > CIvarval for i in eta)/float(len(eta))
 				probability.append(p_temp)
-			error.append(sqrt((1-p_temp)*p_temp/len(eta)))
+				error.append(sqrt((1-p_temp)*p_temp/len(eta)))
+				eta_true.append(eta_true_one)
+			print 'File "%s" was calculated' %file
 		except:
 			print 'ERROR: File "%s" cannot be calculated' %file
 
 
+	for i in range(len(eta_true)):
+		print probability[i], eta_true[i]
 	# Estimate parametrs for exponentia
 	A, B = estimate_par_exp(probability, eta_true)
 
@@ -166,6 +185,8 @@ if __name__ == "__main__":
 	L.AddEntry("","#Delta#Lambda^{" + ('+' if CL_SIDE == 'right' else '-') + "} = "
 	 		 + "%.2f" % Lambda_er + " TeV    ","")
 	L.Draw("Same")
+
+	raw_input("Warning: press to save")
 
 	canvas.SaveAs("%s/%s_%s_%s.pdf" % (WORKDIR,model,CL_SIDE,LIMIT_SETTING) )
 

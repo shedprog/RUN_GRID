@@ -146,6 +146,80 @@ function monte_carlo_freq() {
 	done	
 } 
 
+function monte_carlo_freq_LQ() {
+	echo '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
+    echo '~~~~~~~~ Monte carlo-mode was activated ~~~~~~~~'
+    echo '~~~~~~~~~~~~~~~ Frequency approach ~~~~~~~~~~~~~'
+    echo '~~~~~~~~~~~~~~~~~~~~LQ MODE~~~~~~~~~~~~~~~~~~~~~'
+    echo '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~' 
+  
+    
+    echo "Do you want to delete MC generated results? (Y/n)"
+    echo "Press Y to create the clean folder for data"
+    read 
+    if [[ $REPLY =~ ^[Yy]$ ]]
+    then
+        # do dangerous stuff
+        remove_monte_carlo_result
+    fi
+ 
+	for CItype in "${models[@]}"
+
+        do
+
+		CIvarstep=1.0E-07
+
+        echo $(grep -i $CItype $WORKDIR/$1)
+	
+        upper_lim=$(grep -i $CItype $WORKDIR/$1 | awk '{print $3}')
+        lower_lim=$(grep -i $CItype $WORKDIR/$1 | awk '{print $2}')
+        START=$lower_lim
+        STEP=$( echo $upper_lim $lower_lim $NUMBER_OF_STEPS | awk '{print ($1-$2)/($3-1)}')
+
+
+		for (( IREP=1; IREP<=$(($NUMBER_OF_STEPS*2)); IREP=$(($IREP+1)) ))
+		do
+		
+        mkdir -p $OUTPUTDIR/RUN/run_mc/r_${IREP}
+        
+        # Check the number of submited jobs (should not be more than 5k)
+        while  [ $(condor_q | awk '/Total for query:/{print $10}') -gt 10000 ]; do sleep 1;echo '.'; done 
+
+			CIvarval=$( echo $STEP $IREP $START | awk '{print $1*($2-1)+$3}')
+
+
+            # This variable was generated to save results for different runs of this soft in different files
+            # Because IRAND and SEED and other things will be the same
+            RANDOMIZE=$((RANDOM))
+
+			for (( IREP2=1; IREP2<=$seednumber; IREP2=$(($IREP2+1)) ))
+			do	
+				echo $CItype $CIvarval	
+
+				seed=$(echo $seedstart $seedstep $IREP $IREP2 | awk '{print $1+$2*(($3-1)*5000+$4)}')
+			
+		       	# while  [ $(qstat -s p | wc -l) -gt 20000 ]; do sleep 1;echo '.'; done 
+
+                # Check the number of threded jobs should not be more than 30
+                while [ $(jobs | wc -l) -ge 20 ] ; do sleep 1 ; done
+									
+				sed "s|REFWORKDIR|$WORKDIR|g ; s|REFOUTDIR|$OUTPUTDIR|g ;\
+				s|INCItype=.*|INCItype='$CItype'|g ;\
+				s|INCIvarval=.*|INCIvarval=$CIvarval|g ; s|INCIvarstep=.*|INCIvarstep=$CIvarstep|g ;\
+				s|INCIDoSimpFit=.*|INCIDoSimpFit='true'|g ; s|INCISimpFitStep=.*|INCISimpFitStep='SimpFit'|g ; \
+				s|INISeedMC=.*|INISeedMC=$seed|g ; s|IREP=.*|IREP=$IREP|g ; s|IREP2=.*|IREP2=$IREP2|g;\
+                s|INchange_CIvarval_afterMC=.*|INchange_CIvarval_afterMC=false|g;\
+                s|INCIvarval_afterMC=.*|INCIvarval_afterMC=0.0|g;\
+                s|INlRAND=.*|INlRAND=true|g; \
+                s|randomize=.*|randomize=$RANDOMIZE|g \
+				" $WORKDIR/tmp_grid/batch_bird_mc.cmd > $OUTPUTDIR/RUN/run_mc/r_${IREP}/batch_${CItype}_${IREP}_${IREP2}.cmd
+				 	
+				condor_qsub -l distro=sld6 -l h_vmem=5000M -q short.q -cwd $OUTPUTDIR/RUN/run_mc/r_${IREP}/batch_${CItype}_${IREP}_${IREP2}.cmd &
+			done
+		done
+	done	
+} 
+
 function monte_carlo_LH() {
 
     echo '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'

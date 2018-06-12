@@ -85,6 +85,7 @@ if __name__ == "__main__":
 	LIMIT_SETTING=sys.argv[2]   # measured or expected
 	WORKDIR=sys.argv[3]         # PATH/TO/OUTPUT
 	model=sys.argv[4]
+	is_cut=sys.argv[5]
 
 	# This part define CIvarval for the analysis of P(R<R_data)
 	if (LIMIT_SETTING == 'measured'):
@@ -113,8 +114,10 @@ if __name__ == "__main__":
 
 			# print file, eta_true_arr, eta
 			# raw_input("Warning: press to quite")
-			# cut = eta_true_one > -0.6E-6 and eta_true_one < -0.3E-6
-			cut = True
+			if is_cut == true:
+				cut = eta_true_one > 0.25E-6
+			else:
+				cut = True
 			# print cut
 			
 			if sys.argv[1] == 'right' and cut:
@@ -127,7 +130,7 @@ if __name__ == "__main__":
 				probability.append(p_temp)
 				error.append(sqrt((1-p_temp)*p_temp/len(eta)))
 				eta_true.append(eta_true_one)
-			print 'File "%s" was calculated' %file
+			print 'File "%s" was calculated' %file, p_temp, eta_true_one
 		except:
 			print 'ERROR: File "%s" cannot be calculated' %file
 
@@ -154,8 +157,12 @@ if __name__ == "__main__":
 	Lambda = math.sqrt(4*math.pi/abs(eta))/1000
 	Lambda_er = math.sqrt(math.pi/abs(eta**3))*eta_error/1000
 
+	# ML = math.sqrt(1/abs(eta))/1000
+	# ML_er = math.sqrt(math.pi/abs(eta**3))*eta_error/1000
+
 
 	canvas = ROOT.TCanvas("name", "Contact Interactions analysis", 1524, 800)
+	# canvas = ROOT.TCanvas("name", "Contact Interactions analysis")
 	graph.GetXaxis().SetTitle('#eta_{True} [GeV]')
 	graph.GetYaxis().SetTitle('Prob(#eta^{Fit} < #eta^{Data}) [%]')
 	graph.SetTitle("%s - %s" % (model,LIMIT_SETTING) )
@@ -180,6 +187,8 @@ if __name__ == "__main__":
 	L.AddEntry(func,"exponential fit")
 	L.AddEntry("", "#eta = " + "%.2le" % eta + " GeV^{-2}    ","")
 	L.AddEntry("", "#Delta#eta = " + "%.2le" % eta_error + " GeV^{-2}    ","")
+	# L.AddEntry("","M_{LQ}/#lambda_{LQ} = %.2f" % ML,"")
+	# L.AddEntry("","#Delta M_{LQ}/#lambda_{LQ} = %.2f" % ML_er,"")
 	L.AddEntry("","#Lambda^{" + ('+' if CL_SIDE == 'right' else '-') + "} = "
 	 		 + "%.2f" % Lambda + " TeV    ","")
 	L.AddEntry("","#Delta#Lambda^{" + ('+' if CL_SIDE == 'right' else '-') + "} = "

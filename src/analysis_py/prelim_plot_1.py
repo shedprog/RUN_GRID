@@ -45,13 +45,15 @@ if __name__ == "__main__":
     eta_true = []
 
     files = sorted([f for f in os.listdir('%s/output/monte_carlo' % WORKDIR) if re.match(r'.*RES.*', f)])
-    print files
+    # print files
 
     for file in files:
         try:
             eta_true_arr,eta = read_to_array('%s/output/monte_carlo/%s' % (WORKDIR, file))
             eta_true.append(eta_true_arr[0])
-            print eta_true_arr[0]
+            # print eta_true_arr[0]
+
+
             p_right = sum(i < CIvarval_data for i in eta)/float(len(eta))
             probability_right.append(p_right)
             error_right.append(sqrt((1-p_right)*p_right/len(eta)))
@@ -132,5 +134,5 @@ if __name__ == "__main__":
     M.Draw("Same")
 
     raw_input("Warning: press to save")
-    canvas.SaveAs("%s/PRE_PLOT_%s.pdf" % (WORKDIR,model))
+    canvas.SaveAs("%s/PRE_PLOT_%s.eps" % (WORKDIR,model))
     raw_input("Warning: press to quite")

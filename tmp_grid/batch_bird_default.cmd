@@ -27,8 +27,6 @@ INCIDoSimpFit='true'
 INCISimpFitStep='SimpFit'
 INchange_CIvarval_afterMC=false
 INCIvarval_afterMC=0.0
-
-cp REFOUTDIR/output/derivatives/CIDerivatives_${PDF_is}_${INCItype}.txt ./CIDerivatives.txt
 CI_FIT_TYPE=${INCItype//|//}
 sed -i "s|doCI = .*|doCI = $INdoCI|g" $TMPDIR/steering.txt
 sed -i "s|CItype = .*|CItype = '$CI_FIT_TYPE'|g" $TMPDIR/steering.txt
@@ -46,6 +44,4 @@ cp $TMPDIR/output/minuit.out.txt REFOUTDIR/output/simpfit/minuit_${PDF_is}_${INC
 cp $TMPDIR/steering.txt REFOUTDIR/output/simpfit/steering_${PDF_is}_${INCItype}.txt
 RES=$(awk '{ print $2,$3,$4 }' < output/CIout.txt)
 chi2=$(grep -i 'After' $TMPDIR/output/Results.txt | awk '{print $3}')
-status=$(grep -ir -E 'STATUS=CONVERGED|STATUS=FAILED' $TMPDIR/output/minuit.out.txt | awk '{print $5}')
-echo $INCItype $chi2 $RES $status >> REFOUTDIR/output/simpfit/RESULTS_${PDF_is}_${INCItype}.txt
-
+echo $INCItype $chi2 $RES >> REFOUTDIR/output/simpfit/RESULTS_${PDF_is}_${INCItype}.txt

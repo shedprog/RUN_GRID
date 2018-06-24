@@ -29,8 +29,10 @@ INCISimpFitStep='CalcDerivatives'
 INchange_CIvarval_afterMC=false
 INCIvarval_afterMC=0.0
 
+CI_FIT_TYPE=${INCItype//|//}
+
 sed -i "s|doCI = .*|doCI = $INdoCI|g" $TMPDIR/steering.txt
-sed -i "s|CItype = .*|CItype = '$INCItype'|g" $TMPDIR/steering.txt
+sed -i "s|CItype = .*|CItype = '$CI_FIT_TYPE'|g" $TMPDIR/steering.txt
 sed -i "s|CIvarval = .*|CIvarval = $INCIvarval|g" $TMPDIR/steering.txt
 sed -i "s|CIvarstep = .*|CIvarstep = $INCIvarstep|g" $TMPDIR/steering.txt
 sed -i "s|CIDoSimpFit =.*|CIDoSimpFit = $INCIDoSimpFit|g" $TMPDIR/steering.txt

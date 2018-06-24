@@ -12,6 +12,8 @@ function build_deriv {
 
     for CItype in "${models[@]}"
 	do
+    # #replace / with | in the name of the file
+    # file_name=${model////|}
 
 	CIvarval=0.0
 	CIvarstep=1.0E-07

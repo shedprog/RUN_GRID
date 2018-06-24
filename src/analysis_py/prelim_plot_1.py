@@ -35,6 +35,7 @@ if __name__ == "__main__":
     file_CI = open('%s/output/simpfit/RESULTS_CI.txt' % WORKDIR)
     a = re.findall(r'[+-]?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?|^\w+',file_CI.readline())
     CIvarval_data = float(a[2])
+    print CIvarval_data 
     file_CI.close()
     CIvarval_SM = 0.0
 
@@ -50,21 +51,21 @@ if __name__ == "__main__":
     for file in files:
         try:
             eta_true_arr,eta = read_to_array('%s/output/monte_carlo/%s' % (WORKDIR, file))
-            eta_true.append(eta_true_arr[0])
             # print eta_true_arr[0]
+            if eta_true_arr[0]<1.0E-06:
+                eta_true.append(eta_true_arr[0])
 
+                p_right = sum(i < CIvarval_data for i in eta)/float(len(eta))
+                probability_right.append(p_right)
+                error_right.append(sqrt((1-p_right)*p_right/len(eta)))
 
-            p_right = sum(i < CIvarval_data for i in eta)/float(len(eta))
-            probability_right.append(p_right)
-            error_right.append(sqrt((1-p_right)*p_right/len(eta)))
+                p_left = sum(i > CIvarval_data for i in eta)/float(len(eta))
+                probability_left.append(p_left)
+                error_left.append(sqrt((1-p_left)*p_left/len(eta)))
 
-            p_left = sum(i > CIvarval_data for i in eta)/float(len(eta))
-            probability_left.append(p_left)
-            error_left.append(sqrt((1-p_left)*p_left/len(eta)))
-
-            p_sm = sum(i > CIvarval_SM for i in eta)/float(len(eta))
-            probability_SM.append(p_sm)
-            error_SM.append(sqrt((1-p_sm)*p_sm/len(eta)))
+                p_sm = sum(i > CIvarval_SM for i in eta)/float(len(eta))
+                probability_SM.append(p_sm)
+                error_SM.append(sqrt((1-p_sm)*p_sm/len(eta)))
         except:
 			print 'ERROR: File "%s" cannot be calculated' %file
 
@@ -80,7 +81,7 @@ if __name__ == "__main__":
     
 
     for i in range(len(eta_true)):
-
+        print 100*probability_left[i],100*probability_right[i],eta_true[i]
         graph_L.SetPoint(i, eta_true[i], 100*probability_left[i])
         graph_L.SetPointError(i, 0, 100*error_left[i])
         graph_R.SetPoint(i, eta_true[i], 100*probability_right[i])

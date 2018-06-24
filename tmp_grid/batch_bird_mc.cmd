@@ -28,8 +28,8 @@ INISeedMC=11000111
 randomize=RANDOM
 
 cp REFOUTDIR/output/derivatives/CIDerivatives_CI_${INCItype}.txt ./CIDerivatives.txt
-
-sed -i "s|CItype = '.*'|CItype = '$INCItype'|g" $TMPDIR/steering.txt
+CI_FIT_TYPE=${INCItype//|//}
+sed -i "s|CItype = '.*'|CItype = '$CI_FIT_TYPE'|g" $TMPDIR/steering.txt
 sed -i "s|CIvarval =.*|CIvarval = $INCIvarval|g" $TMPDIR/steering.txt
 sed -i "s|CIvarstep = '.*'|CIvarstep = $INCIvarstep|g" $TMPDIR/steering.txt
 sed -i "s|CIDoSimpFit =.*|CIDoSimpFit = true|g" $TMPDIR/steering.txt

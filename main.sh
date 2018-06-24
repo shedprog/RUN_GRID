@@ -50,6 +50,8 @@ function main_menu
     # The name of the functions to call
     MY_ACTIONS=("build_deriv"\
         "simpfit"\
+        "shape setting_limits_shape.txt"\
+        "monte_carlo_ZERO"\
         "monte_carlo_freq settings_limits.txt"\
         "monte_carlo_freq settings_explimits.txt"\
         "replica measured"\
@@ -61,6 +63,8 @@ function main_menu
     # The name of the names of the functions to call
     LABELS=("Build derivatives for SM, CI"\
         "Simplified fit <-- derivatives for SM, CI"\
+        "shape setting_limits_shape.txt"\
+        "monte_carlo_ZERO"\
         "Monte carlo frequency aproch <-- derivatives for SM, CI"\
         "Monte carlo frequency aproch EXPECTED LIMS <-- derivatives for SM, CI"\
         "Analysis - measured"\

@@ -13,6 +13,9 @@ import ROOT
 # in <PATH  TO RESULTS> has to be folders: "output"-folder (in output:)
 # input: "monte_catlo", "simpfit"
 
+def lin(x, A, B):
+	return x*A+B
+
 def function(x, A, B):
 	'''This function is exponent 
 	for fitting procedure'''
@@ -29,8 +32,10 @@ def estimate_par_exp(probability, eta_true):
 	'''Thid function estimate best 
 	parametrs for sucsesfull exp fit'''
 
-	x1, x2 = eta_true[0], eta_true[-1]
-	y1, y2 = 20*probability[0], 20*probability[-1]
+	# x1, x2 = eta_true[0], eta_true[-1]
+	# y1, y2 = 20*probability[0], 20*probability[-1]
+	x1, x2 = min(eta_true), max(eta_true)
+	y1, y2 = 20*min(probability), 20*max(probability)
 
 	# if 0 we will have error in logarifm:
 	y1 = (1e-3 if y1==0.0 else y1)
@@ -85,12 +90,13 @@ if __name__ == "__main__":
 	LIMIT_SETTING=sys.argv[2]   # measured or expected
 	WORKDIR=sys.argv[3]         # PATH/TO/OUTPUT
 	model=sys.argv[4]
-	is_cut=sys.argv[5]
+	# is_cut=sys.argv[5]
 
 	# This part define CIvarval for the analysis of P(R<R_data)
 	if (LIMIT_SETTING == 'measured'):
 		file_CI = open('%s/output/simpfit/RESULTS_CI.txt' % WORKDIR)
 		a = re.findall(r'[+-]?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?|^\w+',file_CI.readline())
+		print a
 		CIvarval = float(a[2])
 		file_CI.close()
 	elif (LIMIT_SETTING == 'expected'):
@@ -107,19 +113,22 @@ if __name__ == "__main__":
 	files = sorted([f for f in os.listdir('%s/output/monte_carlo' % WORKDIR) if re.match(r'.*RES.*', f)])
 	print files
 
+	
 	for file in files:
 		try:
 			eta_true_arr,eta = read_to_array('%s/output/monte_carlo/%s' % (WORKDIR, file))
 			eta_true_one = eta_true_arr[3]
 
+			# is_cut = False
+			is_cut = True
 			# print file, eta_true_arr, eta
 			# raw_input("Warning: press to quite")
-			if is_cut == true:
-				cut = eta_true_one > 0.25E-6
+			if is_cut == True:
+				cut = eta_true_one > -0.001E-6 and eta_true_one < 0.05E-6
+				# cut = eta_true_one < -0.03E-6
 			else:
 				cut = True
-			# print cut
-			
+
 			if sys.argv[1] == 'right' and cut:
 				p_temp = sum(i < CIvarval for i in eta)/float(len(eta))
 				probability.append(p_temp)
@@ -139,6 +148,7 @@ if __name__ == "__main__":
 		print probability[i], eta_true[i]
 	# Estimate parametrs for exponentia
 	A, B = estimate_par_exp(probability, eta_true)
+	print A,B
 
 	# Exponential fit with ROOT framework
 
@@ -147,10 +157,12 @@ if __name__ == "__main__":
 		graph.SetPoint(i, eta_true[i], probability[i])
 		graph.SetPointError(i, 0, error[i])
 
+
 	func = ROOT.TF1("Exponent",function_ROOT,
 					min(eta_true),max(eta_true),2)
 	func.SetParameters(A,B)
 	graph.Fit(func)
+	print "CIvarval = ", CIvarval
 	eta = func.GetParameter(0)
 	eta_error = func.GetParError(0)
 

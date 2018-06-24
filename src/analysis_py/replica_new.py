@@ -75,12 +75,29 @@ if __name__ == "__main__":
 	for file in files:
 		try:
 			eta_true_arr,eta = read_to_array('%s/output/monte_carlo/%s' % (WORKDIR, file))
-			eta_true.append(eta_true_arr[0])
-			error.append(sqrt(0.95*0.05/len(eta)))
-			if sys.argv[1] == 'right':
-				probability.append(sum(i < CIvarval for i in eta)/float(len(eta)))
-			elif sys.argv[1] == 'left':
-				probability.append(sum(i > CIvarval for i in eta)/float(len(eta)))
+			eta_true_one = eta_true_arr[3]
+
+			# is_cut = False
+			is_cut = True
+			# print file, eta_true_arr, eta
+			# raw_input("Warning: press to quite")
+			if is_cut == True:
+				# cut = eta_true_one > -1.3E-6 and eta_true_one < -1.0E-6
+				cut = eta_true_one < -0.83E-6
+			else:
+				cut = True
+
+			if sys.argv[1] == 'right' and cut:
+				p_temp = sum(i < CIvarval for i in eta)/float(len(eta))
+				probability.append(p_temp)
+				error.append(sqrt((1-p_temp)*p_temp/len(eta)))
+				eta_true.append(eta_true_one)
+			elif sys.argv[1] == 'left' and cut:
+				p_temp = sum(i > CIvarval for i in eta)/float(len(eta))
+				probability.append(p_temp)
+				error.append(sqrt((1-p_temp)*p_temp/len(eta)))
+				eta_true.append(eta_true_one)
+			print 'File "%s" was calculated' %file, p_temp, eta_true_one
 		except:
 			print 'ERROR: File "%s" cannot be calculated' %file
 

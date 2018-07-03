@@ -1,15 +1,15 @@
 set title
-new  13p HERAPDF
+new  14p HERAPDF
 parameters
    1    'Ag'                       0.0000        0.
-   2    'Bg'                       0.027002    0.002
+   2    'Bg'                       0.0270      0.02
    3    'Cg'                       8.472597    0.1
    4    'Dg'                       0.0000        0.
    5    'Eg'                       0.0000        0.
    6    'Fg'                       0.0000        0.
    7    'Aprig'                    0.599758    0.01
    8    'Bprig'                   -0.178017    0.01
-   9    'Cprig'                    25.         0.  
+   9    'Cprig'                    25.           0.  
    11   'Auv'                      0.0000        0.
    12   'Buv'                      0.708973    0.01
    13   'Cuv'                      4.945993    0.1
@@ -50,8 +50,6 @@ parameters
    83   'Cdel'                     0.0000        0.
    84   'Ddel'                     0.0000        0.
    85   'Edel'                     0.0000        0.
-
-
 
 *set print 3  
 *call fcn 3

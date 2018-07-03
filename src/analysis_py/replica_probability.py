@@ -52,7 +52,7 @@ if __name__ == "__main__":
 	eta_true=[]
 	error=[]
 
-	files = sorted([f for f in os.listdir('%s/output/monte_carlo' % WORKDIR) if re.match(r'.*RES.*', f)])
+	files = sorted([f for f in os.listdir('%s/output/monte_carlo' % WORKDIR) if re.match(r'.*RESULTS_V_o_R.*', f)])
 	print files
 
 	n=0

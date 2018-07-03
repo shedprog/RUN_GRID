@@ -27,7 +27,7 @@ IREP2=1
 INISeedMC=11000111
 INchange_CIvarval_afterMC=true
 INCIvarval_afterMC=0.0
-CI_FIT_TYPE=${INCItype//|//}
+CI_FIT_TYPE=${INCItype//div//}
 
 sed -i "s|CItype = '.*'|CItype = '$CI_FIT_TYPE'|g" $TMPDIR/steering.txt
 sed -i "s|CIvarval =.*|CIvarval = $INCIvarval|g" $TMPDIR/steering.txt

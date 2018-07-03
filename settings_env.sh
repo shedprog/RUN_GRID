@@ -12,8 +12,8 @@ cd -
 
 
 # directory:
-SOFT="/afs/desy.de/user/m/mykytaua/sc_soft/todesy"
-# SOFT="/nfs/dust/zeus/group/mykytaua/SHARE_SOFT"
+#SOFT="/afs/desy.de/user/m/mykytaua/sc_soft/todesy"
+SOFT="/nfs/dust/zeus/group/mykytaua/SHARE_SOFT"
 
 export QCDNUM_ROOT="$SOFT/qcdnum-17-01-13_build"
 export XFITTER="$SOFT/xFitter_CI_LQ"

@@ -57,8 +57,9 @@ def read_to_array(file):
 	eta_true = []
 	for line in f:
 		try:
-			a = re.findall(r'[+-]?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?|^\w+',line)
+			a = re.split(r' ',line)
 			# len(a) == 6 to skip the
+			# print a
 			if sys.argv[1] == 'right' and ( len(a) == 7 or len(a) == 6 ):
 				# print a 
 				if float(a[2])>CIvarval:
@@ -94,10 +95,11 @@ if __name__ == "__main__":
 
 	# This part define CIvarval for the analysis of P(R<R_data)
 	if (LIMIT_SETTING == 'measured'):
-		file_CI = open('%s/output/simpfit/RESULTS_CI.txt' % WORKDIR)
-		a = re.findall(r'[+-]?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?|^\w+',file_CI.readline())
+		file_CI = open('%s/output/simpfit/RESULTS_CI_%s.txt' % (WORKDIR,model))
+		# file_CI = open('%s/output/simpfit/RESULTS_CI.txt' % WORKDIR)
+		a = re.split(r' ',file_CI.readline())
 		print a
-		CIvarval = float(a[2])
+		CIvarval = float(a[3])
 		file_CI.close()
 	elif (LIMIT_SETTING == 'expected'):
 		CIvarval = 0.0
@@ -105,12 +107,17 @@ if __name__ == "__main__":
 		print "Error: wrong second <measured/expected> argument"
 		sys.exit()
 
+	print CIvarval
+
+
 	'''This part initiate variables'''
 	probability=[]
 	eta_true=[]
 	error=[]
 
-	files = sorted([f for f in os.listdir('%s/output/monte_carlo' % WORKDIR) if re.match(r'.*RES.*', f)])
+	reg_exp = re.compile(r'.*RESULTS_'+re.escape(model)+r'.*')
+	# reg_exp = re.compile(r'.*RESULTS_.*')
+	files = sorted([f for f in os.listdir('%s/output/monte_carlo' % WORKDIR) if re.match(reg_exp, f)])
 	print files
 
 	
@@ -124,8 +131,8 @@ if __name__ == "__main__":
 			# print file, eta_true_arr, eta
 			# raw_input("Warning: press to quite")
 			if is_cut == True:
-				cut = eta_true_one > -0.001E-6 and eta_true_one < 0.05E-6
-				# cut = eta_true_one < -0.03E-6
+				# cut = eta_true_one > 0.7E-6 and eta_true_one < 1.4E-6
+				cut = eta_true_one > 0.1E-6
 			else:
 				cut = True
 
@@ -206,6 +213,19 @@ if __name__ == "__main__":
 	L.AddEntry("","#Delta#Lambda^{" + ('+' if CL_SIDE == 'right' else '-') + "} = "
 	 		 + "%.2f" % Lambda_er + " TeV    ","")
 	L.Draw("Same")
+
+	# Draw 5% line
+	ly = ROOT.TLine(graph.GetXaxis().GetXmin(),0.05,eta,0.05)
+	ly.SetLineColor(1)
+	ly.SetLineWidth(2)
+	ly.SetLineStyle(4)
+	ly.Draw("Same")
+
+	lx = ROOT.TLine(eta,graph.GetYaxis().GetXmin(),eta,0.05)
+	lx.SetLineColor(1)
+	lx.SetLineWidth(2)
+	lx.SetLineStyle(4)
+	lx.Draw("Same")
 
 	raw_input("Warning: press to save")
 

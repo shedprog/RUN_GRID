@@ -9,7 +9,7 @@ source src/mc.sh
 
 function replica {
     echo $OUTPUTDIR
-    python $WORKDIR/src/analysis_py/replica_new.py left $1 $OUTPUTDIR $models
+    python $WORKDIR/src/analysis_py/replica_new.py right $1 $OUTPUTDIR $models
 }
 
 

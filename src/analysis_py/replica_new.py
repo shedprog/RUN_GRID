@@ -54,7 +54,7 @@ if __name__ == "__main__":
 
 	# This part define CIvarval for the analysis of P(R<R_data)
 	if (LIMIT_SETTING == 'measured'):
-		file_CI = open('%s/output/simpfit/RESULTS_CI.txt' % WORKDIR)
+		file_CI = open('%s/output/simpfit/RESULTS_CI_%s.txt' % (WORKDIR,model))
 		a = re.findall(r'[+-]?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?|^\w+',file_CI.readline())
 		CIvarval = float(a[2])
 		file_CI.close()
@@ -83,7 +83,7 @@ if __name__ == "__main__":
 			# raw_input("Warning: press to quite")
 			if is_cut == True:
 				# cut = eta_true_one > -1.3E-6 and eta_true_one < -1.0E-6
-				cut = eta_true_one < -0.83E-6
+				cut = eta_true_one > 1.10E-6
 			else:
 				cut = True
 

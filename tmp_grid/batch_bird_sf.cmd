@@ -29,7 +29,7 @@ INchange_CIvarval_afterMC=false
 INCIvarval_afterMC=0.0
 
 cp REFOUTDIR/output/derivatives/CIDerivatives_${PDF_is}_${INCItype}.txt ./CIDerivatives.txt
-CI_FIT_TYPE=${INCItype//|//}
+CI_FIT_TYPE=${INCItype//div//}
 sed -i "s|doCI = .*|doCI = $INdoCI|g" $TMPDIR/steering.txt
 sed -i "s|CItype = .*|CItype = '$CI_FIT_TYPE'|g" $TMPDIR/steering.txt
 sed -i "s|CIvarval = .*|CIvarval = $INCIvarval|g" $TMPDIR/steering.txt

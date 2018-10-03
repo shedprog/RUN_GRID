@@ -17,6 +17,7 @@ SOFT="/nfs/dust/zeus/group/mykytaua/SHARE_SOFT"
 
 export QCDNUM_ROOT="$SOFT/qcdnum-17-01-13_build"
 export XFITTER="$SOFT/xFitter_CI_LQ"
+#export XFITTER="/nfs/dust/zeus/group/turkot/CIstudy02/fitCI/xFitter_CI_180629"
 export BLAS="$SOFT/OpenBLAS_build"
 
 export PATH="$PATH:\

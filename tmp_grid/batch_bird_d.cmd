@@ -9,8 +9,9 @@ set -x
 
 source REFWORKDIR/settings_env.sh
 
-echo $TMPDIR
-cd $TMPDIR
+echo $TMP
+cd $TMP
+export TMPDIR=$TMP
 
 cp REFWORKDIR/tmp_xfitter/minuit.in.txt .
 cp REFWORKDIR/tmp_xfitter/ewparam.txt .

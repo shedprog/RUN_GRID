@@ -94,6 +94,9 @@ function remove_simpfit_result {
 	fi
 	mkdir -p $OUTPUTDIR/bird_info_out/bird_out_sf/err
 	mkdir -p $OUTPUTDIR/bird_info_out/bird_out_sf/out
+	mkdir -p $OUTPUTDIR/bird_info_out/bird_out_sf/log
+
+	
 
 	echo    "remove_simpfit_result done"
 }
@@ -134,16 +137,17 @@ function remove_monte_carlo_result {
 	fi
 	mkdir -p $OUTPUTDIR/RUN/run_mc
 
-	if [ -d $OUTPUTDIR/output/monte_carlo ]; then
-	rm -rf $OUTPUTDIR/output/monte_carlo
-	fi
-	mkdir -p $OUTPUTDIR/output/monte_carlo
+	# if [ -d $OUTPUTDIR/output/monte_carlo ]; then
+	# rm -rf $OUTPUTDIR/output/monte_carlo
+	# fi
+	# mkdir -p $OUTPUTDIR/output/monte_carlo
 
 	if [ -d $OUTPUTDIR/bird_info_out/bird_out_mc ]; then
 	rm -rf $OUTPUTDIR/bird_info_out/bird_out_mc
 	fi
 	mkdir -p $OUTPUTDIR/bird_info_out/bird_out_mc/err
 	mkdir -p $OUTPUTDIR/bird_info_out/bird_out_mc/out
+	mkdir -p $OUTPUTDIR/bird_info_out/bird_out_mc/log
 
 	echo    "remove_monte_carlo_result done"
 }

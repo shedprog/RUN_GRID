@@ -17,8 +17,7 @@ INCItype='VV'
 INCIvarval=0.0
 INCIvarstep=1.0E-06
 IREP=1
-IREP2=1
-INISeedMC=11000111
+INISeedMC=$((RANDOM*RANDOM))
 randomize=RANDOM
 
 cp REFOUTDIR/output/derivatives/CIDerivatives_CI_${INCItype}.txt ./CIDerivatives.txt
@@ -42,6 +41,6 @@ status=$(grep -ir -E 'STATUS=CONVERGED|STATUS=FAILED' output/minuit.out.txt | aw
 echo $INCItype $chis $INCIvarval $RES $status $INISeedMC >> REFOUTDIR/output/monte_carlo/RESULTS_${INCItype}_${IREP}_${randomize}.txt
 
 #Warning: Clean!
-rm REFOUTDIR/bird_info_out/bird_out_mc/err/*
-rm REFOUTDIR/bird_info_out/bird_out_mc/out/*
-rm REFOUTDIR/RUN/run_mc/r_${IREP}/batch_${INCItype}_${IREP}_${IREP2}.cmd
+# rm REFOUTDIR/bird_info_out/bird_out_mc/err/*
+# rm REFOUTDIR/bird_info_out/bird_out_mc/out/*
+# rm REFOUTDIR/RUN/run_mc/r_${IREP}/batch_${INCItype}_${IREP}_${IREP2}.cmd

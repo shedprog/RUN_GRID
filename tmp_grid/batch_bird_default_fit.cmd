@@ -11,7 +11,7 @@ source REFWORKDIR/settings_env.sh
 
 echo $TMP
 cd $TMP
-TMPDIR = $TMP
+export TMPDIR=$TMP
 
 cp REFWORKDIR/tmp_xfitter/minuit.in.txt .
 cp REFWORKDIR/tmp_xfitter/ewparam.txt .
@@ -21,24 +21,18 @@ ln -s REFWORKDIR/datafiles .
 
 PDF_is='CI'
 INdoCI=true
-INCItype='VV'
+INCItype='SM'
 INCIvarval=0.0
 INCIvarstep=1.0E-06
-INCIDoSimpFit='true'
-INCISimpFitStep='SimpFit'
-INchange_CIvarval_afterMC=false
-INCIvarval_afterMC=0.0
+INCIDoSimpFit=false
 
-cp REFOUTDIR/output/derivatives/CIDerivatives_${PDF_is}_${INCItype}.txt ./CIDerivatives.txt
 CI_FIT_TYPE=${INCItype//div//}
 sed -i "s|doCI = .*|doCI = $INdoCI|g" $TMPDIR/steering.txt
 sed -i "s|CItype = .*|CItype = '$CI_FIT_TYPE'|g" $TMPDIR/steering.txt
 sed -i "s|CIvarval = .*|CIvarval = $INCIvarval|g" $TMPDIR/steering.txt
 sed -i "s|CIvarstep = .*|CIvarstep = $INCIvarstep|g" $TMPDIR/steering.txt
 sed -i "s|CIDoSimpFit =.*|CIDoSimpFit = $INCIDoSimpFit|g" $TMPDIR/steering.txt
-sed -i "s|CISimpFitStep = '.*|CISimpFitStep = '$INCISimpFitStep'|g" $TMPDIR/steering.txt
-sed -i "s| change_CIvarval_afterMC = .*| change_CIvarval_afterMC = $INchange_CIvarval_afterMC|g" $TMPDIR/steering.txt
-sed -i "s| CIvarval_afterMC = .*| CIvarval_afterMC = $INCIvarval_afterMC|g" $TMPDIR/steering.txt
+
 
 ./xfitter
 
@@ -50,3 +44,4 @@ chi2=$(grep -i 'After' $TMPDIR/output/Results.txt | awk '{print $3}')
 status=$(grep -ir -E 'STATUS=CONVERGED|STATUS=FAILED' $TMPDIR/output/minuit.out.txt | awk '{print $5}')
 echo $INCItype $chi2 $RES $status >> REFOUTDIR/output/simpfit/RESULTS_${PDF_is}_${INCItype}.txt
 
+cp -rf $TMPDIR/output REFOUTDIR/output/simpfit/output_${INCItype}

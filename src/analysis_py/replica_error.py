@@ -95,11 +95,12 @@ if __name__ == "__main__":
 
 	# This part define CIvarval for the analysis of P(R<R_data)
 	if (LIMIT_SETTING == 'measured'):
-		file_CI = open('%s/output/simpfit/RESULTS_CI_%s.txt' % (WORKDIR,model))
-		# file_CI = open('%s/output/simpfit/RESULTS_CI.txt' % WORKDIR)
+		# file_CI = open('%s/output/simpfit/RESULTS_CI_%s.txt' % (WORKDIR,model))
+		file_CI = open('%s/output/simpfit/RESULTS_CI.txt' % WORKDIR)
 		a = re.split(r' ',file_CI.readline())
+		print "Output of RESULTS_CI.txt: "
 		print a
-		CIvarval = float(a[3])
+		CIvarval = float(a[2])
 		file_CI.close()
 	elif (LIMIT_SETTING == 'expected'):
 		CIvarval = 0.0
@@ -107,7 +108,7 @@ if __name__ == "__main__":
 		print "Error: wrong second <measured/expected> argument"
 		sys.exit()
 
-	print CIvarval
+	print "This is CIvarval: ",CIvarval
 
 
 	'''This part initiate variables'''
@@ -115,8 +116,8 @@ if __name__ == "__main__":
 	eta_true=[]
 	error=[]
 
-	reg_exp = re.compile(r'.*RESULTS_'+re.escape(model)+r'.*')
-	# reg_exp = re.compile(r'.*RESULTS_.*')
+	# reg_exp = re.compile(r'.*RESULTS_'+re.escape(model)+r'.*')
+	reg_exp = re.compile(r'.*RESULTS_.*')
 	files = sorted([f for f in os.listdir('%s/output/monte_carlo' % WORKDIR) if re.match(reg_exp, f)])
 	print files
 
@@ -126,13 +127,13 @@ if __name__ == "__main__":
 			eta_true_arr,eta = read_to_array('%s/output/monte_carlo/%s' % (WORKDIR, file))
 			eta_true_one = eta_true_arr[3]
 
-			# is_cut = False
-			is_cut = True
+			is_cut = False
+			# is_cut = True
 			# print file, eta_true_arr, eta
 			# raw_input("Warning: press to quite")
 			if is_cut == True:
-				# cut = eta_true_one > 0.7E-6 and eta_true_one < 1.4E-6
-				cut = eta_true_one > 0.1E-6
+				# cut = eta_true_one > -0.4E-6 and eta_true_one < 0
+				cut = eta_true_one < -0.25E-6
 			else:
 				cut = True
 
@@ -202,8 +203,8 @@ if __name__ == "__main__":
 	elif CL_SIDE == 'right':
 		L = ROOT.TLegend(.7,.6,.9,.9,"Fit results:")
 	L.SetFillColor(0)
-	L.AddEntry(graph,"monte carlo results")
-	L.AddEntry(func,"exponential fit")
+	# L.AddEntry(graph,"monte carlo results")
+	# L.AddEntry(func,"exponential fit")
 	L.AddEntry("", "#eta = " + "%.2le" % eta + " GeV^{-2}    ","")
 	L.AddEntry("", "#Delta#eta = " + "%.2le" % eta_error + " GeV^{-2}    ","")
 	# L.AddEntry("","M_{LQ}/#lambda_{LQ} = %.2f" % ML,"")

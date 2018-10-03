@@ -1,3 +1,6 @@
+# import matplotlib
+# matplotlib.rcParams['text.usetex'] = True
+# matplotlib.rcParams['text.latex.unicode'] = True
 import matplotlib.mlab as mlab
 import matplotlib.pyplot as plt
 from numpy import array, sqrt, pi, exp, linspace
@@ -7,11 +10,7 @@ from scipy.special import erf
 import numpy as np
 import math, sys, os, re
 import ROOT
-
-def function(x, a, b, c):
-	'''This function is exponent 
-	for fitting procedure'''
-	return a * exp((x-b)*c)
+from matplotlib.patches import Rectangle
 
 def read_to_array(file):
 	'''This function for montecarlo replicas reading
@@ -72,5 +71,26 @@ if __name__ == "__main__":
 			eta_true.append(eta_true_one)
 		print file[8:13], round(p_temp*100,2),'% ', CIvarval[n],'GeV ', len(eta), 'Replicas'
 		n=n+1
+
+        # Build histogram for every point:
+        # plt.rc('text', usetex=True)
+        #plt.rc('font', family='serif')
+        extra = Rectangle((0, 0), 1, 1, fc="w", fill=False, edgecolor='none', linewidth=0)
+        a1 = plt.axvline(x=3.13397e-07,color='black', linestyle='dashed', linewidth=1)
+        # a2 = plt.axvline(x=sum(eta)/float(len(eta)), linestyle='dashed', color='green', linewidth=1)
+        a3 = plt.axvline(x=0.0, linestyle='dashed', color='m', linewidth=1)
+        # av = sum(eta)/float(len(eta))
+        # plt.legend([a1,a2,a3], ["Attr A", "Attr A+B","s"])
+        plt.legend([a1,a3,extra], [r"$\eta^{Data}$ = 3.13 $GeV^{-2}$", r"$\eta^{True}$ = 0.0 $GeV^{-2}$",r"Fraction of $\eta^{Fit}>\eta^{Data}$: 0.75%"],loc='upper left')
+        # plt.legend([a1,a3,a2], [r"$\eta^{Data} = 3.13 GeV^{-2}$", r"$\eta^{True} = 0.0 GeV^{-2}$","Mean: %f" % av])
+
+        plt.hist(eta, 200, alpha = 1, lw=3, histtype='bar',color='plum')
+        # edgecolor='black', linewidth=0.002,
+        plt.ylabel('Entries', fontsize=14)
+        plt.xlabel(r'$\eta^{Fit} (GeV^{-2}$)',fontsize=14)
+
+        # plt.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
+        # plt.grid(True)
+        plt.show()
 		# except:
 		# 	print 'ERROR: File "%s" cannot be calculated' %file

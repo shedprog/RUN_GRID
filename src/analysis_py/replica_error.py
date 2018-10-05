@@ -75,8 +75,7 @@ def read_to_array(file):
 	# print eta_true,eta
 	return eta_true,eta
 
-if __name__ == "__main__":
-
+def arguments_check():
 	"""This part checks if arguments are right"""
 	try:
 		if (sys.argv[1] != 'right') and (sys.argv[1] != 'left'):
@@ -86,13 +85,8 @@ if __name__ == "__main__":
 		print "Please, put 'right' or 'left' as an argument"
 		sys.exit()
 
+def get_CIvarval(string,LIMIT_SETTING):
 	
-	CL_SIDE=sys.argv[1]         # right or left
-	LIMIT_SETTING=sys.argv[2]   # measured or expected
-	WORKDIR=sys.argv[3]         # PATH/TO/OUTPUT
-	model=sys.argv[4]
-	# is_cut=sys.argv[5]
-
 	# This part define CIvarval for the analysis of P(R<R_data)
 	if (LIMIT_SETTING == 'measured'):
 		# file_CI = open('%s/output/simpfit/RESULTS_CI_%s.txt' % (WORKDIR,model))
@@ -102,12 +96,26 @@ if __name__ == "__main__":
 		print a
 		CIvarval = float(a[3])
 		file_CI.close()
+
 	elif (LIMIT_SETTING == 'expected'):
 		CIvarval = 0.0
+
 	else:
 		print "Error: wrong second <measured/expected> argument"
 		sys.exit()
 
+
+if __name__ == "__main__":
+
+	arguments_check()
+	
+	CL_SIDE=sys.argv[1]         # right or left
+	LIMIT_SETTING=sys.argv[2]   # measured or expected
+	WORKDIR=sys.argv[3]         # PATH/TO/OUTPUT
+	model=sys.argv[4]			
+
+
+	CIvarval = get_CIvarval('%s/output/simpfit/RESULTS_CI.txt' % WORKDIR, LIMIT_SETTING)
 	print "This is CIvarval: ",CIvarval
 
 

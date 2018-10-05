@@ -1,5 +1,5 @@
 Executable = RUN_FILE
-log = REFOUTDIR/bird_info_out/bird_out_mc/log/comon.log
+log = REFOUTDIR/bird_info_out/bird_out_mc/log/$(Process).log
 output = REFOUTDIR/bird_info_out/bird_out_mc/out/$(Process).txt
 error = REFOUTDIR/bird_info_out/bird_out_mc/err/$(Process).err
 Universe = vanilla

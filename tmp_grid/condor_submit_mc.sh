@@ -22,6 +22,7 @@ randomize=RANDOM
 
 cp REFOUTDIR/output/derivatives/CIDerivatives_CI_${INCItype}.txt ./CIDerivatives.txt
 CI_FIT_TYPE=${INCItype//div//}
+sed -i "s|doCI = false|doCI = true|g" $TMPDIR/steering.txt
 sed -i "s|CItype = '.*'|CItype = '$CI_FIT_TYPE'|g" $TMPDIR/steering.txt
 sed -i "s|CIvarval =.*|CIvarval = $INCIvarval|g" $TMPDIR/steering.txt
 sed -i "s|CIvarstep = '.*'|CIvarstep = $INCIvarstep|g" $TMPDIR/steering.txt

@@ -59,20 +59,20 @@ def read_to_array(file):
 		try:
 			a = re.split(r' ',line)
 			# len(a) == 6 to skip the
-			# print a
-			if sys.argv[1] == 'right' and ( len(a) == 7 or len(a) == 6 ):
+			# print len(a)
+			if sys.argv[1] == 'right' and len(a) in [6,7]:
 				# print a 
 				if float(a[2])>CIvarval:
 					eta_true.append(float(a[2]))
 					eta.append(float(a[3]))
-			if sys.argv[1] == 'left' and ( len(a) == 7 or len(a) == 6 ):
+			if sys.argv[1] == 'left' and len(a) in [6,7]:
 				if float(a[2])<CIvarval:
 					eta_true.append(float(a[2]))
 					eta.append(float(a[3]))
 		except:
 			pass
 	f.close()
-	# print eta
+	# print eta_true,eta
 	return eta_true,eta
 
 if __name__ == "__main__":
@@ -100,7 +100,7 @@ if __name__ == "__main__":
 		a = re.split(r' ',file_CI.readline())
 		print "Output of RESULTS_CI.txt: "
 		print a
-		CIvarval = float(a[2])
+		CIvarval = float(a[3])
 		file_CI.close()
 	elif (LIMIT_SETTING == 'expected'):
 		CIvarval = 0.0

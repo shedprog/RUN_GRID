@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 from numpy import array, sqrt, pi, exp, linspace
+from contracts import contract
 from scipy.optimize import curve_fit
 import numpy as np
 import math, sys, os, re
@@ -28,6 +29,7 @@ def function_ROOT(x,p):
 
 	return 0.05 * exp((x[0]-p[0])*p[1])
 
+@contract(probability='list[>0](float)',eta_true='list[>0](float)',returns='tuple(float,float)')
 def estimate_par_exp(probability, eta_true):
 	'''Thid function estimate best 
 	parametrs for sucsesfull exp fit'''
@@ -48,6 +50,7 @@ def estimate_par_exp(probability, eta_true):
 
 	return A, B
 
+#@contract(file='string',returns='tuple(float,float)')
 def read_to_array(file):
 	'''This function for montecarlo replicas reading
 	and putting it into an array'''
@@ -58,10 +61,10 @@ def read_to_array(file):
 	for line in f:
 		try:
 			a = re.split(r' ',line)
+			# print a
 			# len(a) == 6 to skip the
 			# print len(a)
 			if sys.argv[1] == 'right' and len(a) in [6,7]:
-				# print a 
 				if float(a[2])>CIvarval:
 					eta_true.append(float(a[2]))
 					eta.append(float(a[3]))
@@ -89,8 +92,7 @@ def get_CIvarval(string,LIMIT_SETTING):
 	
 	# This part define CIvarval for the analysis of P(R<R_data)
 	if (LIMIT_SETTING == 'measured'):
-		# file_CI = open('%s/output/simpfit/RESULTS_CI_%s.txt' % (WORKDIR,model))
-		file_CI = open('%s/output/simpfit/RESULTS_CI.txt' % WORKDIR)
+		file_CI = open(string)
 		a = re.split(r' ',file_CI.readline())
 		print "Output of RESULTS_CI.txt: "
 		print a
@@ -103,6 +105,35 @@ def get_CIvarval(string,LIMIT_SETTING):
 	else:
 		print "Error: wrong second <measured/expected> argument"
 		sys.exit()
+	
+	return CIvarval
+
+def systematic_shift(CIvarval,systematic_list,model,CL_SIDE):
+	'''This function read systematics from file
+	and shifts the CIvarval'''
+
+	factor_correction = 1.0E-6
+	print "systematic shift!"
+	file_CI = open(systematic_list)
+	line_num = 0
+	for line in file_CI.readlines():
+		line_num += 1
+		if line.find(model) >= 0:
+			a = re.split(r' ',line)
+			print a
+			if CL_SIDE == 'right':
+				shift = a[2]
+			elif CL_SIDE == 'left':
+				shift = a[1]
+			break
+	file_CI.close()
+	print "CIvarval unshifted: ", CIvarval
+	print "systematic shift: ", float(shift)*factor_correction
+	CIvarval += float(shift)*factor_correction
+	print "CIvarval shifted: ", CIvarval
+
+	return CIvarval
+
 
 
 if __name__ == "__main__":
@@ -114,10 +145,16 @@ if __name__ == "__main__":
 	WORKDIR=sys.argv[3]         # PATH/TO/OUTPUT
 	model=sys.argv[4]			
 
-
-	CIvarval = get_CIvarval('%s/output/simpfit/RESULTS_CI.txt' % WORKDIR, LIMIT_SETTING)
+	eta_data_path = "/home/nikita/Projects_physics/DESY_work_dir/Results/NEW_2018/GENERAL/output/simpfit"
+	CIvarval = get_CIvarval('%s/RESULTS_CI_%s.txt' % (eta_data_path,model),LIMIT_SETTING)
+	# CIvarval = get_CIvarval('%s/output/simpfit/RESULTS_CI.txt' % WORKDIR, LIMIT_SETTING)
 	print "This is CIvarval: ",CIvarval
 
+	#Systematic shift
+	# CIvarval = systematic_shift(CIvarval,
+	# 							'/home/nikita/Projects_physics/DESY_work_dir/Results/NEW_2018/systematics.txt',
+	# 							model,CL_SIDE)
+	# print "This is CIvarval shifted: ",CIvarval
 
 	'''This part initiate variables'''
 	probability=[]
@@ -140,8 +177,8 @@ if __name__ == "__main__":
 			# print file, eta_true_arr, eta
 			# raw_input("Warning: press to quite")
 			if is_cut == True:
-				# cut = eta_true_one > -0.4E-6 and eta_true_one < 0
-				cut = eta_true_one < -0.25E-6
+				cut = eta_true_one > -0.05E-6 and eta_true_one < 0.05E-6
+				# cut = eta_true_one > -0.05E-6
 			else:
 				cut = True
 
@@ -213,6 +250,7 @@ if __name__ == "__main__":
 	L.SetFillColor(0)
 	# L.AddEntry(graph,"monte carlo results")
 	# L.AddEntry(func,"exponential fit")
+	L.AddEntry("", "#eta_{data} = " + "%.2le" % CIvarval + " GeV^{-2}    ","")
 	L.AddEntry("", "#eta = " + "%.2le" % eta + " GeV^{-2}    ","")
 	L.AddEntry("", "#Delta#eta = " + "%.2le" % eta_error + " GeV^{-2}    ","")
 	# L.AddEntry("","M_{LQ}/#lambda_{LQ} = %.2f" % ML,"")

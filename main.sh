@@ -19,7 +19,7 @@ function main_menu
     MY_ACTIONS=("default_fit"\
         "build_deriv"\
         "simpfit"\
-        "monte_carlo_freq_updated  settings_limits.txt"\
+        "monte_carlo_freq_updated  settings_limits_sys.txt"\
         "monte_carlo_freq_updated  settings_explimits.txt"\
         "replica measured"\
         "replica expected"\

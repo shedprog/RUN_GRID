@@ -27,7 +27,7 @@ function monte_carlo_freq_updated {
         r_upper_lim=$(grep -i "^$CItype\b" $WORKDIR/$1 | awk '{print $5}')
         r_lower_lim=$(grep -i "^$CItype\b" $WORKDIR/$1 | awk '{print $4}')
 
-		for (( IREP=21; IREP<=$(($NUMBER_OF_STEPS*2)); IREP=$(($IREP+1)) ))
+		for (( IREP=1; IREP<=$(($NUMBER_OF_STEPS*2)); IREP=$(($IREP+1)) ))
 		do
 		
         mkdir -p $OUTPUTDIR/RUN/run_mc/r_${IREP}

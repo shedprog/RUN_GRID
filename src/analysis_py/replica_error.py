@@ -110,10 +110,17 @@ def get_CIvarval(string,LIMIT_SETTING):
 
 def systematic_shift(CIvarval,systematic_list,model,CL_SIDE):
 	'''This function read systematics from file
-	and shifts the CIvarval'''
+	and shifts the CIvarval, the input file
+	should be the table of the next form:
+	<models> <left shift> <right shift>
+	LL -0.037 +0.017
+	RR -0.038 +0.019
+	LR -0.060 +0.212
+	RL -0.057 +0.198 ...
+	'''
 
 	factor_correction = 1.0E-6
-	print "systematic shift!"
+	print "avarage systematic shift mode"
 	file_CI = open(systematic_list)
 	line_num = 0
 	for line in file_CI.readlines():
@@ -134,7 +141,58 @@ def systematic_shift(CIvarval,systematic_list,model,CL_SIDE):
 
 	return CIvarval
 
+def systematic_shift_latex(path_to_latex,model,CL_SIDE):
+	'''This function read latex file,
+	that was formed by Oleksii Turkot
+	and shifts the CIvarval. Maximal shift
+	is supposed to be taken from the table
+	'''
+	from TexSoup import TexSoup
+	from astropy.table import Table
+	import re
 
+	print "Systematic shifts will be choosen from latex:"
+	print path_to_latex
+	print "Minimal and maximal will be choosen for %s model" % model
+
+	file = str(open(path_to_latex).read())
+	
+	# Parse table object for fixed model
+	reg_exp_table = r'(\\begin\{table\}((?!\\end\{table\}).)*\\caption\{Results for the '\
+					+ model\
+					+ ' fits\.\}((?!\\end\{table\}).)*\\end\{table\})'
+	reg_exp_table = re.compile(reg_exp_table,
+							   re.IGNORECASE|re.DOTALL|re.MULTILINE)
+	table = reg_exp_table.search(file).group(1) # group(1) doesn't  include outside expression
+												# group(0) includes outside expression
+
+	reg_exp_lines = r'\\hline\n(exp(.|\n)*)\\\\\n\\hline'
+	reg_exp_lines = re.compile(reg_exp_lines,
+							   re.IGNORECASE|re.DOTALL|re.MULTILINE)
+	lines = reg_exp_lines.search(table).group(1)
+
+	print "%s MODEL"%model
+	print lines
+
+	data_table = []
+	eta_data = []
+
+	for line in lines.split('\\\\\n'): # \\ + \n in the end of lines
+		data_line = line.replace(" ", "").split('&')
+		eta_data.append(float(data_line[3]))
+		data_table.append(data_line)
+
+	if CL_SIDE == 'right':
+		print 'maximal shift:'
+		print data_table[eta_data.index(max(eta_data))]
+		CIvarval = data_table[eta_data.index(max(eta_data))][3]
+	elif CL_SIDE == 'left':
+		print 'minimal shift:'
+		print data_table[eta_data.index(min(eta_data))]
+		CIvarval = data_table[eta_data.index(max(eta_data))][3]
+	
+	print "shifted CIvarval with systematics: ",CIvarval
+	return CIvarval
 
 if __name__ == "__main__":
 
@@ -148,15 +206,21 @@ if __name__ == "__main__":
 	eta_data_path = "/home/nikita/Projects_physics/DESY_work_dir/Results/NEW_2018/GENERAL/output/simpfit"
 	CIvarval = get_CIvarval('%s/RESULTS_CI_%s.txt' % (eta_data_path,model),LIMIT_SETTING)
 	# CIvarval = get_CIvarval('%s/output/simpfit/RESULTS_CI.txt' % WORKDIR, LIMIT_SETTING)
-	print "This is CIvarval: ",CIvarval
+	print "this is CIvarval: ",CIvarval
 
-	#Systematic shift
+	# Systematic shift of the table form
 	# CIvarval = systematic_shift(CIvarval,
 	# 							'/home/nikita/Projects_physics/DESY_work_dir/Results/NEW_2018/systematics.txt',
 	# 							model,CL_SIDE)
 	# print "This is CIvarval shifted: ",CIvarval
 
-	'''This part initiate variables'''
+	# list_model = ['AA','VA','VV','X1','X2','X3','X4','X5','RR','LL','LR','RL']
+	# for one_model in list_model:
+	# 	# Systematic shifts from the latex file
+	CIvarval = systematic_shift_latex('/home/nikita/Projects_physics/DESY_work_dir/Results/NEW_2018/CIFitResults.tex',model,CL_SIDE)
+	# sys.exit()
+
+	'''This part initiates variables'''
 	probability=[]
 	eta_true=[]
 	error=[]

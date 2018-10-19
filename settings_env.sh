@@ -8,8 +8,11 @@ export CERN_ROOT=/cvmfs/sft.cern.ch/lcg/app/releases/ROOT/5.34.00/x86_64-slc6-gc
 # root
 cd /cvmfs/sft.cern.ch/lcg/app/releases/ROOT/5.34.00/x86_64-slc6-gcc46-opt/root
 . /cvmfs/sft.cern.ch/lcg/app/releases/ROOT/5.34.00/x86_64-slc6-gcc46-opt/root/bin/thisroot.sh
-cd -
 
+cd $WORKDIR
+
+export PATH_PARAM="/nfs/dust/zeus/group/mykytaua/NEW_APROACH_SYS/N10_180917_emp_unc"
+export PATH_LATEX="/nfs/dust/zeus/group/mykytaua/NEW_APROACH_SYS/CIFitResults.tex"
 
 # directory:
 #SOFT="/afs/desy.de/user/m/mykytaua/sc_soft/todesy"

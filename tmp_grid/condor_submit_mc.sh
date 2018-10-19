@@ -29,12 +29,12 @@ sed -i "s|CIvarstep = '.*'|CIvarstep = $INCIvarstep|g" $TMPDIR/steering.txt
 sed -i "s|CIDoSimpFit =.*|CIDoSimpFit = true|g" $TMPDIR/steering.txt
 sed -i "s|CISimpFitStep = .*|CISimpFitStep = 'SimpFit'|g" $TMPDIR/steering.txt
 sed -i "s|ISeedMC =.*|ISeedMC = $INISeedMC|g" $TMPDIR/steering.txt
-sed -i "s|lRAND = .*|lRAND = True|g" $TMPDIR/steering.txt
+sed -i "s|lRAND .*|lRAND = True|g" $TMPDIR/steering.txt
 
 ./xfitter
 
 #cp $TMPDIR/output/CIout.txt  REFOUTDIR/output/monte_carlo/CIval_in_${INCItype}_${IREP}.txt
-#cp $TMPDIR/steering.txt REFOUTDIR/output/monte_carlo/steering_${INCItype}_${IREP}.txt
+cp $TMPDIR/steering.txt REFOUTDIR/output/monte_carlo/steering_${INCItype}_${IREP}.txt
 
 RES=$(awk '{ print $3,$4 }' < output/CIout.txt)
 chis=$(grep -i 'After' output/Results.txt | awk '{print $3}')

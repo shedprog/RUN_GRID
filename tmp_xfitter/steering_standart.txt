@@ -7,29 +7,13 @@
  
   ! Input files:
 
-    InputFileNames(1) = '/nfs/dust/zeus/group/turkot/CIstudy02/datafiles/h1zeus/HERA1+2_NCep_920.dat'
-    InputFileNames(2) = '/nfs/dust/zeus/group/turkot/CIstudy02/datafiles/h1zeus/HERA1+2_NCep_820.dat'
-    InputFileNames(3) = '/nfs/dust/zeus/group/turkot/CIstudy02/datafiles/h1zeus/HERA1+2_NCep_575.dat'
-    InputFileNames(4) = '/nfs/dust/zeus/group/turkot/CIstudy02/datafiles/h1zeus/HERA1+2_NCep_460.dat'
-    InputFileNames(5) = '/nfs/dust/zeus/group/turkot/CIstudy02/datafiles/h1zeus/HERA1+2_NCem.dat'
-    InputFileNames(6) = '/nfs/dust/zeus/group/turkot/CIstudy02/datafiles/h1zeus/HERA1+2_CCep.dat'
-    InputFileNames(7) = '/nfs/dust/zeus/group/turkot/CIstudy02/datafiles/h1zeus/HERA1+2_CCem.dat'
-
-!    InputFileNames(1) = '/nfs/dust/zeus/group/turkot/Data/HERApostEB/HERA1+2_CCem.dat'
-!    InputFileNames(2) = '/nfs/dust/zeus/group/turkot/Data/HERApostEB/HERA1+2_CCep.dat'
-!    InputFileNames(3) = '/nfs/dust/zeus/group/turkot/Data/HERApostEB/HERA1+2_NCem.dat'
-!    InputFileNames(4) = '/nfs/dust/zeus/group/turkot/Data/HERApostEB/HERA1+2_NCep_460.dat'
-!    InputFileNames(5) = '/nfs/dust/zeus/group/turkot/Data/HERApostEB/HERA1+2_NCep_575.dat'
-!    InputFileNames(6) = '/nfs/dust/zeus/group/turkot/Data/HERApostEB/HERA1+2_NCep_820.dat'
-!    InputFileNames(7) = '/nfs/dust/zeus/group/turkot/Data/HERApostEB/HERA1+2_NCep_920.dat'
-
-!    InputFileNames(1) = 'datafiles/hera/h1zeusCombined/inclusiveDis/1506.06042/HERA1+2_NCep_920.dat'
-!    InputFileNames(2) = 'datafiles/hera/h1zeusCombined/inclusiveDis/1506.06042/HERA1+2_NCep_820.dat'
-!    InputFileNames(3) = 'datafiles/hera/h1zeusCombined/inclusiveDis/1506.06042/HERA1+2_NCep_575.dat'
-!    InputFileNames(4) = 'datafiles/hera/h1zeusCombined/inclusiveDis/1506.06042/HERA1+2_NCep_460.dat'
-!    InputFileNames(5) = 'datafiles/hera/h1zeusCombined/inclusiveDis/1506.06042/HERA1+2_NCem.dat'
-!    InputFileNames(6) = 'datafiles/hera/h1zeusCombined/inclusiveDis/1506.06042/HERA1+2_CCep.dat'
-!    InputFileNames(7) = 'datafiles/hera/h1zeusCombined/inclusiveDis/1506.06042/HERA1+2_CCem.dat'
+    InputFileNames(1) = 'datafiles/h1zeus/HERA1+2_NCep_920.dat'
+    InputFileNames(2) = 'datafiles/h1zeus/HERA1+2_NCep_820.dat'
+    InputFileNames(3) = 'datafiles/h1zeus/HERA1+2_NCep_575.dat'
+    InputFileNames(4) = 'datafiles/h1zeus/HERA1+2_NCep_460.dat'
+    InputFileNames(5) = 'datafiles/h1zeus/HERA1+2_NCem.dat'
+    InputFileNames(6) = 'datafiles/h1zeus/HERA1+2_CCep.dat'
+    InputFileNames(7) = 'datafiles/h1zeus/HERA1+2_CCem.dat'
 
 &End
 
@@ -189,7 +173,7 @@
  !  'ExtraSystRescale'      : additional re-scaling of stat. uncertainty to account for syst. shifts.
 
    CHI2SettingsName = 'StatScale', 'UncorSysScale', 'CorSysScale', 'UncorChi2Type', 'CorChi2Type'
-   Chi2Settings     = 'NoRescale'  , 'NoRescale',        'Linear'     , 'Diagonal'     , 'Hessian'
+	 Chi2Settings     = 'NoRescale'  , 'NoRescale',        'Linear'     , 'Diagonal'     , 'Hessian'
    ! Chi2ExtraParam = 'PoissonCorr'
 
  ! Flag to define if native APPLgrid CKM values should be kept.
@@ -209,7 +193,7 @@
 *
 &ExtraMinimisationParameters
    name  = 'alphas',   'fs',   'fcharm'
-   value =  0.118,   0.4,      0.
+   value =  0.118 ,   0.4,      0.
    step  =  0.0    ,   0.0 ,      0.     ! set to 0 to avoid minimisation 
 &End
 
@@ -320,10 +304,10 @@
 *
 &MCErrors
   ! Activate MC method for error estimation if lRand = True
-  lRAND   = .false.
+  lRAND = false
   
   ! Use data (true, default) or theory (false) for the central values of the MC replica
-  lRANDDATA = False
+  lRANDDATA = false
 
   ! MC method Seed
   ISeedMC = 1100000001 
@@ -401,7 +385,6 @@
   ! DataToTheo = True                  ! reset data to predictions corresponding to member 0, for sensitivity studies
 &End
 
-
 &CIstudy
   ! Whether to do the Contact Interaction analysis:
   doCI = false
@@ -424,4 +407,3 @@
   CISimpFitStep = 'SimpFit'
 
 &End
-

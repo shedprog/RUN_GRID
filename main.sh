@@ -1,6 +1,7 @@
 #!/bin/zsh
 
 source settings_var.sh
+source settings_env.sh
 source src/simpfit.sh
 source src/clean.sh
 source src/derivative.sh
@@ -12,50 +13,78 @@ function replica_ROOT {
     python ./src/analysis_py/replica_error.py right $1 $OUTPUTDIR $models
 }
 
-function main_menu
-{
-    local -a MY_ACTIONS
-
-    MY_ACTIONS=("default_fit"\
-        "build_deriv"\
-        "simpfit"\
-        "monte_carlo_freq_updated  settings_limits_sys.txt"\
-        "monte_carlo_freq_updated  settings_explimits.txt"\
-        "replica measured"\
-        "replica expected"\
-        "CLEAN_ALL")
-        
-    LABELS=("Default fit"\
-        "Build derivatives for SM, CI"\
-        "Simplified fit <-- derivatives for SM, CI"\
-        "MC new - measured"\
-        "MC new - expected"\
-        "Analysis - measured"\
-        "Analysis - expected"\
-        "CLEAN_ALL")
-
-    local -i I=1
-    echo "SELECT RUN_GRID OPTION"
-    while [ $I -le ${#MY_ACTIONS[@]} ]
-    do
-        echo "$I) ${LABELS[$I]}"
-        (( I += 1 ))
-    done
-
-    local SELECTION
-    read -s SELECTION
-
-    local ORD_VALUE=$(LC_CTYPE=C printf '%d' "'$SELECTION")
-    (( ORD_VALUE -= 48 ))
-
-    if [ $ORD_VALUE -gt 0 -a $ORD_VALUE -le ${#MY_ACTIONS[@]} ]
-    then
-        eval ${MY_ACTIONS[${ORD_VALUE}]}
-        return
-    fi
-
-    echo "-> INVALID SELECTION"
-    main_menu
+function reload_tamplates_xfitter {
+    echo 're-loading tamplates'
+    python ./src/analysis_py/update_tamplates.py $PATH_LATEX $PATH_PARAM $models $1
 }
 
-main_menu 
+executable="echo 'main.sh running:'"
+
+while [ ! $# -eq 0 ]
+do
+    case "$1" in
+
+        --mode| -m)
+            ci_mode=$2
+            shift
+            ;;
+        
+        --side| -s)
+            side=$2
+            shift
+            ;;
+
+        --tamplates | -ta)
+            executable="$executable; echo 'Load tamplates xfitter. Side:' $side"
+            executable="$executable; reload_tamplates_xfitter $side"
+            ;;
+
+        --default_fit | -df)
+            executable="$executable; echo 'Load tamplates xfitter. Side:' $side"
+            executable="$executable; reload_tamplates_xfitter $side"
+            
+            executable="$executable; echo 'Default fit'" 
+            executable="$executable; default_fit"
+            ;;
+
+        --derivative | -de)
+            executable="$executable; echo 'Load tamplates xfitter. Side:' $side"
+            executable="$executable; reload_tamplates_xfitter $side"
+            
+            executable="$executable; echo 'Build derivatives for SM, CI'"
+            executable="$executable; build_deriv"
+            ;;
+
+        --simpfit | -sf)
+            echo "Simplified fit is not available in this version of the program!"
+            executable="$executable; echo 'Simplified fit <-- derivatives for SM, CI'"
+            executable="$executable; simpfit"
+            ;;
+
+        --monte_carlo | -mc)
+            executable="$executable; echo 'Load tamplates xfitter. Side:' $side"
+            executable="$executable; reload_tamplates_xfitter $side"
+
+            executable="$executable; echo 'Monte Carlo'"
+            executable="$executable; monte_carlo_freq_updated $ci_mode $side"
+            ;;
+
+        --analyse | -an)
+            executable="$executable; echo 'Analysis in python framework'"
+            executable="$executable; replica $ci_mode $side"
+            ;;
+
+        --clean | cl)
+            executable="$executable; echo 'Clean all will be evaluated'"
+            executable="$executable; CLEAN_ALL"
+            ;;
+
+        *)
+            echo 'Not available flag!'
+            break
+            ;;
+    esac
+    shift
+done
+
+eval $executable

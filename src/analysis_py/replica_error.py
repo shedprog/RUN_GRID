@@ -1,6 +1,5 @@
-import matplotlib.pyplot as plt
 from numpy import array, sqrt, pi, exp, linspace
-from contracts import contract
+#from contracts import contract
 from scipy.optimize import curve_fit
 import numpy as np
 import math, sys, os, re
@@ -29,7 +28,7 @@ def function_ROOT(x,p):
 
 	return 0.05 * exp((x[0]-p[0])*p[1])
 
-@contract(probability='list[>0](float)',eta_true='list[>0](float)',returns='tuple(float,float)')
+#@contract(probability='list[>0](float)',eta_true='list[>0](float)',returns='tuple(float,float)')
 def estimate_par_exp(probability, eta_true):
 	'''Thid function estimate best 
 	parametrs for sucsesfull exp fit'''
@@ -65,6 +64,7 @@ def read_to_array(file):
 			# len(a) == 6 to skip the
 			# print len(a)
 			if sys.argv[1] == 'right' and len(a) in [6,7]:
+				# print float(a[2]), CIvarval, float(a[2])<CIvarval
 				if float(a[2])>CIvarval:
 					eta_true.append(float(a[2]))
 					eta.append(float(a[3]))
@@ -147,8 +147,6 @@ def systematic_shift_latex(path_to_latex,model,CL_SIDE):
 	and shifts the CIvarval. Maximal shift
 	is supposed to be taken from the table
 	'''
-	from TexSoup import TexSoup
-	from astropy.table import Table
 	import re
 
 	print "Systematic shifts will be choosen from latex:"
@@ -186,15 +184,22 @@ def systematic_shift_latex(path_to_latex,model,CL_SIDE):
 		print 'maximal shift:'
 		print data_table[eta_data.index(max(eta_data))]
 		CIvarval = data_table[eta_data.index(max(eta_data))][3]
+		param = data_table[eta_data.index(max(eta_data))][0]
 	elif CL_SIDE == 'left':
 		print 'minimal shift:'
 		print data_table[eta_data.index(min(eta_data))]
-		CIvarval = data_table[eta_data.index(max(eta_data))][3]
+		CIvarval = data_table[eta_data.index(min(eta_data))][3]
+		param = data_table[eta_data.index(min(eta_data))][0]
+	else:
+		print 'Side must be clarified'
+		sys.exit()
 	
-	print "shifted CIvarval with systematics: ",CIvarval
-	return CIvarval
+	print "%s shifted CIvarval with systematics: " % param, CIvarval
+	return param, float(CIvarval)
 
 if __name__ == "__main__":
+
+	import matplotlib.pyplot as plt
 
 	arguments_check()
 	
@@ -208,17 +213,15 @@ if __name__ == "__main__":
 	# CIvarval = get_CIvarval('%s/output/simpfit/RESULTS_CI.txt' % WORKDIR, LIMIT_SETTING)
 	print "this is CIvarval: ",CIvarval
 
-	# Systematic shift of the table form
+	# # Systematic shift of the table form
 	# CIvarval = systematic_shift(CIvarval,
 	# 							'/home/nikita/Projects_physics/DESY_work_dir/Results/NEW_2018/systematics.txt',
 	# 							model,CL_SIDE)
 	# print "This is CIvarval shifted: ",CIvarval
 
-	# list_model = ['AA','VA','VV','X1','X2','X3','X4','X5','RR','LL','LR','RL']
-	# for one_model in list_model:
-	# 	# Systematic shifts from the latex file
-	CIvarval = systematic_shift_latex('/home/nikita/Projects_physics/DESY_work_dir/Results/NEW_2018/CIFitResults.tex',model,CL_SIDE)
-	# sys.exit()
+	# # Systematic shift of the Oleksii's Latex
+	param, CIvarval = systematic_shift_latex('/home/nikita/Projects_physics/DESY_work_dir/Results/NEW_2018/CIFitResults.tex',model,CL_SIDE)
+	print param, CIvarval
 
 	'''This part initiates variables'''
 	probability=[]
@@ -235,14 +238,14 @@ if __name__ == "__main__":
 		try:
 			eta_true_arr,eta = read_to_array('%s/output/monte_carlo/%s' % (WORKDIR, file))
 			eta_true_one = eta_true_arr[3]
-
+			print eta_true_one
 			is_cut = False
 			# is_cut = True
 			# print file, eta_true_arr, eta
 			# raw_input("Warning: press to quite")
 			if is_cut == True:
-				cut = eta_true_one > -0.05E-6 and eta_true_one < 0.05E-6
-				# cut = eta_true_one > -0.05E-6
+				# cut = eta_true_one > -0.95E-6 and eta_true_one < -0.85E-6
+				cut = eta_true_one < -0.15E-6
 			else:
 				cut = True
 
@@ -308,13 +311,13 @@ if __name__ == "__main__":
 	# LineX.Draw("Same")
 
 	if CL_SIDE == 'left':
-		L = ROOT.TLegend(.1,.6,.3,.9,"Fit results:")
+		L = ROOT.TLegend(.1,.6,.3,.9,"Fit results: "+"%s sys"%param )
 	elif CL_SIDE == 'right':
-		L = ROOT.TLegend(.7,.6,.9,.9,"Fit results:")
+		L = ROOT.TLegend(.7,.6,.9,.9,"Fit results: "+"%s sys"%param )
 	L.SetFillColor(0)
 	# L.AddEntry(graph,"monte carlo results")
 	# L.AddEntry(func,"exponential fit")
-	L.AddEntry("", "#eta_{data} = " + "%.2le" % CIvarval + " GeV^{-2}    ","")
+	L.AddEntry("","#eta_{data} = " + "%.2le" % CIvarval + " GeV^{-2}    ","")
 	L.AddEntry("", "#eta = " + "%.2le" % eta + " GeV^{-2}    ","")
 	L.AddEntry("", "#Delta#eta = " + "%.2le" % eta_error + " GeV^{-2}    ","")
 	# L.AddEntry("","M_{LQ}/#lambda_{LQ} = %.2f" % ML,"")

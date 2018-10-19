@@ -1,0 +1,35 @@
+set title
+new  14p HERAPDF
+parameters
+2   'Bg'      0.0395      0.2
+3   'Cg'      8.48        1.0
+4   'Dg'      0.0         0.0
+5   'Eg'      0.0         0.0
+7   'Aprig'   0.530       1.1
+8   'Bprig'  -0.180       0.1
+9   'Cprig'  25.0         0.0
+12   'Buv'     0.708       0.04
+13   'Cuv'     4.95        0.09
+14   'Duv'     0.0         0.0
+15   'Euv'    14.8         2.5
+22   'Bdv'     0.828       0.1
+23   'Cdv'     4.14        0.4
+24   'Ddv'     0.0         0.0
+25   'Edv'     0.0         0.0
+33   'CUbar'   8.04        0.8
+34   'DUbar'  11.3         2.9
+35   'EUbar'   0.0         0.0
+41   'ADbar'   0.178       0.01
+42   'BDbar'  -0.170       0.007
+43   'CDbar'   5.71        1.6
+44   'DDbar'   0.0         0.0
+45   'EDbar'   0.0         0.0
+
+
+*set print 3  
+*call fcn 3
+migrad 200000
+*hesse
+set print 3
+
+return

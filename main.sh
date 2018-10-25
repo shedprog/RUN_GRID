@@ -71,7 +71,7 @@ do
 
         --analyse | -an)
             executable="$executable; echo 'Analysis in python framework'"
-            executable="$executable; replica $ci_mode $side"
+            executable="$executable; replica_ROOT $ci_mode $side"
             ;;
 
         --clean | cl)

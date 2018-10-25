@@ -10,7 +10,7 @@ path_to_latex = sys.argv[1]
 path_to_param = sys.argv[2]
 model = sys.argv[3]
 ci_side = sys.argv[4]
-pwd = os.getcwd()
+pwd = os.getcwd() 
 
 param, _civarval = systematic_shift_latex(path_to_latex,model,ci_side)
 

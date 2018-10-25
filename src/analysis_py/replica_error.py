@@ -63,8 +63,8 @@ def read_to_array(file):
 			# print a
 			# len(a) == 6 to skip the
 			# print len(a)
+			# print float(a[2]), CIvarval, float(a[2])<CIvarval
 			if sys.argv[1] == 'right' and len(a) in [6,7]:
-				# print float(a[2]), CIvarval, float(a[2])<CIvarval
 				if float(a[2])>CIvarval:
 					eta_true.append(float(a[2]))
 					eta.append(float(a[3]))
@@ -154,11 +154,39 @@ def systematic_shift_latex(path_to_latex,model,CL_SIDE):
 	print "Minimal and maximal will be choosen for %s model" % model
 
 	file = str(open(path_to_latex).read())
-	
+
+	model_to_latex = {
+		"RR":r'RR', "LL":r'LL', "RL":r'RL', "LR":r'LR', "VV":r'VV', "VA":r'VA', "AA":r'AA',
+		"X1":r'X1', "X2":r'X2', "X3":r'X3', "X4":r'X4', "X5":r'X5', "X6":r'X6',
+		"S_o" : None,
+		"S_o_L":r'\$\\textrm\{S\}\_0\^\{\\textrm\{\\scriptsize L\}\}\$',
+		"S_o_R":r'\$\\textrm\{S\}\_0\^\{\\textrm\{\\scriptsize R\}\}\$',
+		"~S_o":r'\$\\widetilde\{\\textrm\{S\}\}\_0\$',
+		"S_1div2_L":r'\$\\textrm\{S\}_\{\\frac\{1\}\{2\}\}\^\{\\textrm\{\\scriptsize L\}\}\$',
+		"S_1div2_R":r'\$\\textrm\{S\}\_\{\\frac\{1\}\{2\}\}\^\{\\textrm\{\\scriptsize R\}\}\$',
+		#"S_1div2_R":'',
+		"~S_1div2":r'\$\\widetilde\{\\textrm\{S\}\}\_\{\\frac\{1\}\{2\}\}\$',
+		"S_1":r'\$\\textrm\{S\}\_1\$',
+		#"V_o":'',
+		"V_o_L":r'\$\\textrm\{V\}\_0\^\{\\textrm\{\\scriptsize L\}\}\$',
+		"V_o_R":r'\$\\textrm\{V\}\_0\^\{\\textrm\{\\scriptsize R\}\}\$',
+		"~V_o":r'\$\\widetilde\{\\textrm\{V\}\}\_0\$',
+		#"V_1div2":'',
+		"V_1div2_L":r'\$\\textrm\{V\}\_\{\\frac\{1\}\{2\}\}\^\{\\textrm\{\\scriptsize L\}\}\$',
+		"V_1div2_R":r'\$\\textrm\{V\}\_\{\\frac\{1\}\{2\}\}\^\{\\textrm\{\\scriptsize R\}\}\$',
+		"~V_1div2":r'\$\\widetilde\{\\textrm\{V\}\}\_\{\\frac\{1\}\{2\}\}\$',
+		"V_1":r'\$\\textrm\{V\}\_1\$'
+	}
+	# print model
+	model_latex = model_to_latex[model]
+	print model_latex
+
 	# Parse table object for fixed model
 	reg_exp_table = r'(\\begin\{table\}((?!\\end\{table\}).)*\\caption\{Results for the '\
-					+ model\
-					+ ' fits\.\}((?!\\end\{table\}).)*\\end\{table\})'
+					+ model_latex \
+					+ r' fits\.\}((?!\\end\{table\}).)*\\end\{table\})'
+	print reg_exp_table
+	# reg_exp_table = r'(\\begin\{table\}((?!\\end\{table\}).)*\\caption\{Results for the \$\\textrm\{S\}\_1\$ fits\.\}((?!\\end\{table\}).)*\\end\{table\})'
 	reg_exp_table = re.compile(reg_exp_table,
 							   re.IGNORECASE|re.DOTALL|re.MULTILINE)
 	table = reg_exp_table.search(file).group(1) # group(1) doesn't  include outside expression
@@ -169,7 +197,7 @@ def systematic_shift_latex(path_to_latex,model,CL_SIDE):
 							   re.IGNORECASE|re.DOTALL|re.MULTILINE)
 	lines = reg_exp_lines.search(table).group(1)
 
-	print "%s MODEL"%model
+	print "%s MODEL"%model_latex
 	print lines
 
 	data_table = []
@@ -206,7 +234,8 @@ if __name__ == "__main__":
 	CL_SIDE=sys.argv[1]         # right or left
 	LIMIT_SETTING=sys.argv[2]   # measured or expected
 	WORKDIR=sys.argv[3]         # PATH/TO/OUTPUT
-	model=sys.argv[4]			
+	model=sys.argv[4]
+
 
 	eta_data_path = "/home/nikita/Projects_physics/DESY_work_dir/Results/NEW_2018/GENERAL/output/simpfit"
 	CIvarval = get_CIvarval('%s/RESULTS_CI_%s.txt' % (eta_data_path,model),LIMIT_SETTING)
@@ -221,7 +250,7 @@ if __name__ == "__main__":
 
 	# # Systematic shift of the Oleksii's Latex
 	param, CIvarval = systematic_shift_latex('/home/nikita/Projects_physics/DESY_work_dir/Results/NEW_2018/CIFitResults.tex',model,CL_SIDE)
-	print param, CIvarval
+	print 'LATEX MODELS: ',param, CIvarval
 
 	'''This part initiates variables'''
 	probability=[]
@@ -239,13 +268,14 @@ if __name__ == "__main__":
 			eta_true_arr,eta = read_to_array('%s/output/monte_carlo/%s' % (WORKDIR, file))
 			eta_true_one = eta_true_arr[3]
 			print eta_true_one
+
 			is_cut = False
-			# is_cut = True
+			is_cut = True
 			# print file, eta_true_arr, eta
 			# raw_input("Warning: press to quite")
 			if is_cut == True:
-				# cut = eta_true_one > -0.95E-6 and eta_true_one < -0.85E-6
-				cut = eta_true_one < -0.15E-6
+				# cut = eta_true_one > 1.18E-6 and eta_true_one < 1.29E-6
+				cut = eta_true_one < -20E-09
 			else:
 				cut = True
 

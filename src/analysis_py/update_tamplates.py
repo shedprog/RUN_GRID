@@ -63,6 +63,9 @@ steering= re.sub(r'\&CIstudy((.|\n)*)&End',
   CIDoSimpFit = true
   CISimpFitStep = 'SimpFit'
 
+  CIvarmin = 0.0
+  CIvarmax = 0.0
+
 &End
 """, steering, re.IGNORECASE|re.DOTALL|re.MULTILINE)
 steering_file = open('./tmp_xfitter/steering.txt','w')

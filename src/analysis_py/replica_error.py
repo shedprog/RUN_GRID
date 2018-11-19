@@ -249,8 +249,8 @@ if __name__ == "__main__":
 	# print "This is CIvarval shifted: ",CIvarval
 
 	# # Systematic shift of the Oleksii's Latex
-	param, CIvarval = systematic_shift_latex('/home/nikita/Projects_physics/DESY_work_dir/Results/NEW_2018/CIFitResults.tex',model,CL_SIDE)
-	print 'LATEX MODELS: ',param, CIvarval
+	# param, CIvarval = systematic_shift_latex('/home/nikita/Projects_physics/DESY_work_dir/Results/NEW_2018/CIFitResults.tex',model,CL_SIDE)
+	# print 'LATEX MODELS: ',param, CIvarval
 
 	'''This part initiates variables'''
 	probability=[]

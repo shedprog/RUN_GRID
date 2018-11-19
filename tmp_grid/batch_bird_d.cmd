@@ -41,9 +41,10 @@ sed -i "s|CISimpFitStep = '.*|CISimpFitStep = '$INCISimpFitStep'|g" $TMPDIR/stee
 sed -i "s| change_CIvarval_afterMC = .*| change_CIvarval_afterMC = $INchange_CIvarval_afterMC|g" $TMPDIR/steering.txt
 sed -i "s| CIvarval_afterMC = .*| CIvarval_afterMC = $INCIvarval_afterMC|g" $TMPDIR/steering.txt
 
+sed -i "s|CIvarmin .*|CIvarmin = 0.0|g" $TMPDIR/steering.txt
+sed -i "s|CIvarmax .*|CIvarmax = 0.0|g" $TMPDIR/steering.txt
+
 ./xfitter
 
 cp $TMPDIR/steering.txt REFOUTDIR/output/derivatives/steering_${PDF_is}_${INCItype}.txt
 cp $TMPDIR/CIDerivatives.txt REFOUTDIR/output/derivatives/CIDerivatives_${PDF_is}_${INCItype}.txt
-
-

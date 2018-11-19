@@ -12,13 +12,14 @@ cp REFWORKDIR/tmp_xfitter/steering.txt .
 ln -s $XFITTER/bin/xfitter  .
 ln -s REFWORKDIR/datafiles .
 
-
 INCItype='VV'
 INCIvarval=0.0
 INCIvarstep=1.0E-06
 IREP=1
 INISeedMC=$((RANDOM*RANDOM))
 randomize=RANDOM
+ABSmin=1.0E-12
+ABSmax=1.0E-05
 
 cp REFOUTDIR/output/derivatives/CIDerivatives_CI_${INCItype}.txt ./CIDerivatives.txt
 CI_FIT_TYPE=${INCItype//div//}
@@ -31,17 +32,35 @@ sed -i "s|CISimpFitStep = .*|CISimpFitStep = 'SimpFit'|g" $TMPDIR/steering.txt
 sed -i "s|ISeedMC =.*|ISeedMC = $INISeedMC|g" $TMPDIR/steering.txt
 sed -i "s|lRAND .*|lRAND = True|g" $TMPDIR/steering.txt
 
+# First interval \eta<0
+sed -i "s|CIvarmin .*|CIvarmin = -$ABSmax|g" $TMPDIR/steering.txt
+sed -i "s|CIvarmax .*|CIvarmax = $ABSmin|g" $TMPDIR/steering.txt
+
 ./xfitter
 
 #cp $TMPDIR/output/CIout.txt  REFOUTDIR/output/monte_carlo/CIval_in_${INCItype}_${IREP}.txt
-cp $TMPDIR/steering.txt REFOUTDIR/output/monte_carlo/steering_${INCItype}_${IREP}.txt
+cp $TMPDIR/steering.txt REFOUTDIR/output/monte_carlo/steering_neg_${INCItype}_${IREP}.txt
+RES1=$(awk '{ print $3 }' < output/CIout.txt)
+chis1=$(grep -i 'After' output/Results.txt | awk '{print $3}')
+status1=$(grep -ir -E 'STATUS=CONVERGED|STATUS=FAILED' output/minuit.out.txt | awk '{print $5}')
+# echo $INCItype $chis $INCIvarval $RES $status $INISeedMC >> REFOUTDIR/output/monte_carlo/RESULTS_${INCItype}_${IREP}_${randomize}.txt
 
-RES=$(awk '{ print $3,$4 }' < output/CIout.txt)
-chis=$(grep -i 'After' output/Results.txt | awk '{print $3}')
-status=$(grep -ir -E 'STATUS=CONVERGED|STATUS=FAILED' output/minuit.out.txt | awk '{print $5}')
-echo $INCItype $chis $INCIvarval $RES $status $INISeedMC >> REFOUTDIR/output/monte_carlo/RESULTS_${INCItype}_${IREP}_${randomize}.txt
+# Second interval \eta>0
+sed -i "s|CIvarmin .*|CIvarmin = -$ABSmin|g" $TMPDIR/steering.txt
+sed -i "s|CIvarmax .*|CIvarmax = $ABSmax|g" $TMPDIR/steering.txt
 
-#Warning: Clean!
-# rm REFOUTDIR/bird_info_out/bird_out_mc/err/*
-# rm REFOUTDIR/bird_info_out/bird_out_mc/out/*
-# rm REFOUTDIR/RUN/run_mc/r_${IREP}/batch_${INCItype}_${IREP}_${IREP2}.cmd
+./xfitter
+
+#cp $TMPDIR/output/CIout.txt  REFOUTDIR/output/monte_carlo/CIval_in_${INCItype}_${IREP}.txt
+cp $TMPDIR/steering.txt REFOUTDIR/output/monte_carlo/steering_pos_${INCItype}_${IREP}.txt
+RES2=$(awk '{ print $3 }' < output/CIout.txt)
+chis2=$(grep -i 'After' output/Results.txt | awk '{print $3}')
+status2=$(grep -ir -E 'STATUS=CONVERGED|STATUS=FAILED' output/minuit.out.txt | awk '{print $5}')
+# echo $INCItype $chis $INCIvarval $RES $status $INISeedMC >> REFOUTDIR/output/monte_carlo/RESULTS_${INCItype}_${IREP}_${randomize}.txt
+
+null=0.0
+factor=1.0E12
+rep_neg=`echo $(($RES1*$factor))'<'$null | bc -l`
+rep_pos=`echo $(($RES2*$factor))'>'$null | bc -l`
+
+echo $INCItype $INISeedMC $INCIvarval $chis1 $RES1 $status1 $rep_neg $chis2 $RES2 $status2 $rep_pos >> REFOUTDIR/output/monte_carlo/RESULTS_${INCItype}_${IREP}_${randomize}.txt

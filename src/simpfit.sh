@@ -6,7 +6,7 @@ function default_fit {
     echo '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
     echo "Models: ${models[@]}" 
 
-    remove_simpfit_result
+    # remove_simpfit_result
 
     CIvarval=0.0
     CIvarstep=0.0

@@ -1,11 +1,4 @@
 #!/bin/sh
-#
-#
-#$ -e REFOUTDIR/bird_info_out/bird_out_d/err/
-#$ -o REFOUTDIR/bird_info_out/bird_out_d/out/
-#
-#   Turn on Verbose Mode
-set -x
 
 source REFWORKDIR/settings_env.sh
 
@@ -13,9 +6,6 @@ echo $TMP
 cd $TMP
 export TMPDIR=$TMP
 
-#cp REFWORKDIR/tmp_xfitter/minuit.in.txt .
-#cp REFWORKDIR/tmp_xfitter/ewparam.txt .
-#cp REFWORKDIR/tmp_xfitter/steering.txt .
 cp REFOUTDIR/RUN/minuit.in.txt .
 cp REFOUTDIR/RUN/ewparam.txt .
 cp REFOUTDIR/RUN/steering.txt .

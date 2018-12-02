@@ -7,14 +7,14 @@ function monte_carlo_freq_updated {
     echo '~~~~~~~~~~~~~~~~~ updated version ~~~~~~~~~~~~~~'
     echo '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~' 
 
-    echo "Do you want to delete MC generated results? (Y/n)"
-    echo "Press Y to create the clean folder for data"
-    read 
-    if [[ $REPLY =~ ^[Yy]$ ]]
-    then
-        # do dangerous stuff
-        remove_monte_carlo_result
-    fi
+    # echo "Do you want to delete MC generated results? (Y/n)"
+    # echo "Press Y to create the clean folder for data"
+    # read 
+    # if [[ $REPLY =~ ^[Yy]$ ]]
+    # then
+    #     # do dangerous stuff
+    #     remove_monte_carlo_result
+    # fi
 
     ci_mode=$1
     ci_side=$2
@@ -49,7 +49,7 @@ function monte_carlo_freq_updated {
 		for (( IREP=1; IREP<=$NUMBER_OF_STEPS; IREP=$(($IREP+1)) ))
 		do
             
-            mkdir -p $OUTPUTDIR/RUN/run_mc/r_${IREP}
+            # mkdir -p $OUTPUTDIR/RUN/run_mc/r_${IREP}
             
             # # Check the number of submited jobs (should not be more than 5k)
             while  [ $(condor_q | awk '/Total for query:/{print $10}') -gt 10000 ]; do sleep 1;echo '.'; done 
@@ -72,16 +72,16 @@ function monte_carlo_freq_updated {
             s|INCIvarval_afterMC=.*|INCIvarval_afterMC=0.0|g;\
             s|INlRAND=.*|INlRAND = true|g; \
             s|randomize=.*|randomize=$RANDOMIZE|g \
-            " $WORKDIR/tmp_grid/condor_submit_mc.sh > $OUTPUTDIR/RUN/run_mc/r_${IREP}/condor_submit_mc_${CItype}_${IREP}.sh
+            " $WORKDIR/tmp_grid/condor_submit_mc.sh > $OUTPUTDIR/RUN/run_mc/condor_submit_mc_${CItype}_${IREP}_${RANDOMIZE}.sh
 
-            sed "s|RUN_FILE|$OUTPUTDIR/RUN/run_mc/r_${IREP}/condor_submit_mc_${CItype}_${IREP}.sh|g ;\
+            sed "s|RUN_FILE|$OUTPUTDIR/RUN/run_mc/condor_submit_mc_${CItype}_${IREP}_${RANDOMIZE}.sh|g ;\
             s|REFOUTDIR|$OUTPUTDIR|g ;\
             s|NUMBER_OF_RUN|$seednumber|g \
-            " $WORKDIR/tmp_grid/condor_submit > $OUTPUTDIR/RUN/run_mc/r_${IREP}/condor_submit_${CItype}_${IREP}
+            " $WORKDIR/tmp_grid/condor_submit > $OUTPUTDIR/RUN/run_mc/condor_submit_${CItype}_${IREP}_${RANDOMIZE}
 
-            chmod +x $OUTPUTDIR/RUN/run_mc/r_${IREP}/condor_submit_mc_${CItype}_${IREP}.sh
+            chmod +x $OUTPUTDIR/RUN/run_mc/condor_submit_mc_${CItype}_${IREP}_${RANDOMIZE}.sh
                 
-            condor_submit $OUTPUTDIR/RUN/run_mc/r_${IREP}/condor_submit_${CItype}_${IREP}
+            condor_submit $OUTPUTDIR/RUN/run_mc/condor_submit_${CItype}_${IREP}_${RANDOMIZE}
 
 	    done
 	done	

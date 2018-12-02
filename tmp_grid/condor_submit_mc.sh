@@ -6,9 +6,12 @@ echo $TMP
 cd $TMP
 export TMPDIR=$TMP
 
-cp REFWORKDIR/tmp_xfitter/minuit.in.txt .
-cp REFWORKDIR/tmp_xfitter/ewparam.txt .
-cp REFWORKDIR/tmp_xfitter/steering.txt .
+# cp REFWORKDIR/tmp_xfitter/minuit.in.txt .
+# cp REFWORKDIR/tmp_xfitter/ewparam.txt .
+# cp REFWORKDIR/tmp_xfitter/steering.txt .
+cp REFOUTDIR/RUN/minuit.in.txt .
+cp REFOUTDIR/RUN/ewparam.txt .
+cp REFOUTDIR/RUN/steering.txt .
 ln -s $XFITTER/bin/xfitter  .
 ln -s REFWORKDIR/datafiles .
 

@@ -15,7 +15,7 @@ function replica_ROOT {
 
 function reload_tamplates_xfitter {
     echo 're-loading tamplates'
-    python ./src/analysis_py/update_tamplates.py $PATH_LATEX $PATH_PARAM $models $1
+    python ./src/analysis_py/update_tamplates.py $PATH_LATEX $PATH_PARAM $models $1 ${OUTPUTDIR}/RUN $2
 }
 
 executable="echo 'main.sh running:'"
@@ -40,16 +40,20 @@ do
             ;;
 
         --default_fit | -df)
-            executable="$executable; echo 'Load tamplates xfitter. Side:' $side"
-            executable="$executable; reload_tamplates_xfitter $side"
+            remove_simpfit_result
+
+            executable="$executable; echo 'Load tamplates xfitter. Side:' $side $ci_mode"
+            executable="$executable; reload_tamplates_xfitter $side $ci_mode"
             
             executable="$executable; echo 'Default fit'" 
             executable="$executable; default_fit"
             ;;
 
         --derivative | -de)
-            executable="$executable; echo 'Load tamplates xfitter. Side:' $side"
-            executable="$executable; reload_tamplates_xfitter $side"
+            remove_derivatives
+
+            executable="$executable; echo 'Load tamplates xfitter. Side:' $side $ci_mode"
+            executable="$executable; reload_tamplates_xfitter $side $ci_mode"
             
             executable="$executable; echo 'Build derivatives for SM, CI'"
             executable="$executable; build_deriv"
@@ -62,8 +66,17 @@ do
             ;;
 
         --monte_carlo | -mc)
-            executable="$executable; echo 'Load tamplates xfitter. Side:' $side"
-            executable="$executable; reload_tamplates_xfitter $side"
+            echo "Do you want to delete MC generated results? (Y/n)"
+            echo "Press Y to create the clean folder for data"
+            read 
+            if [[ $REPLY =~ ^[Yy]$ ]]
+            then
+                # do dangerous stuff
+                remove_monte_carlo_result
+            fi
+
+            executable="$executable; echo 'Load tamplates xfitter. Side:' $side $ci_mode"
+            executable="$executable; reload_tamplates_xfitter $side $ci_mode"
 
             executable="$executable; echo 'Monte Carlo'"
             executable="$executable; monte_carlo_freq_updated $ci_mode $side"

@@ -44,6 +44,8 @@ function remove_derivatives {
 	fi
 	mkdir -p $OUTPUTDIR/bird_info_out/bird_out_d/err
 	mkdir -p $OUTPUTDIR/bird_info_out/bird_out_d/out
+	mkdir -p $OUTPUTDIR/bird_info_out/bird_out_d/log
+
 
 	echo	"remove_derivatives done"
 } 

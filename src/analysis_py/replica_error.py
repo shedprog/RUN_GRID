@@ -236,21 +236,19 @@ if __name__ == "__main__":
 	WORKDIR=sys.argv[3]         # PATH/TO/OUTPUT
 	model=sys.argv[4]
 
-
-	eta_data_path = "/home/nikita/Projects_physics/DESY_work_dir/Results/NEW_2018/GENERAL/output/simpfit"
-	CIvarval = get_CIvarval('%s/RESULTS_CI_%s.txt' % (eta_data_path,model),LIMIT_SETTING)
-	# CIvarval = get_CIvarval('%s/output/simpfit/RESULTS_CI.txt' % WORKDIR, LIMIT_SETTING)
-	print "this is CIvarval: ",CIvarval
-
-	# # Systematic shift of the table form
-	# CIvarval = systematic_shift(CIvarval,
-	# 							'/home/nikita/Projects_physics/DESY_work_dir/Results/NEW_2018/systematics.txt',
-	# 							model,CL_SIDE)
-	# print "This is CIvarval shifted: ",CIvarval
-
-	# # Systematic shift of the Oleksii's Latex
-	param, CIvarval = systematic_shift_latex('/home/nikita/Projects_physics/DESY_work_dir/Results/NEW_2018/CIFitResults.tex',model,CL_SIDE)
-	print 'LATEX MODELS: ',param, CIvarval
+	if LIMIT_SETTING == 'measured':
+		eta_data_path = "/home/nikita/Projects_physics/DESY_work_dir/Results/NEW_2018/GENERAL/output/simpfit"
+		CIvarval = get_CIvarval('%s/RESULTS_CI_%s.txt' % (eta_data_path,model),LIMIT_SETTING)
+		print "This is CIvarval: ",CIvarval
+	elif LIMIT_SETTING == 'mod_exp':
+		param, CIvarval = systematic_shift_latex('/home/nikita/Projects_physics/DESY_work_dir/Results/NEW_2018/CIFitResults.tex',model,CL_SIDE)
+		print 'LATEX MODELS: ',param, CIvarval
+	elif LIMIT_SETTING == 'expected':
+		CIvarval = 0.0
+		param, _ = systematic_shift_latex('/home/nikita/Projects_physics/DESY_work_dir/Results/NEW_2018/CIFitResults.tex',model,
+				   "left" if CL_SIDE == "right" else "right")
+		CIvarval = 0.0
+		print "this is CIvarval: ",CIvarval
 
 	'''This part initiates variables'''
 	probability=[]
@@ -262,7 +260,6 @@ if __name__ == "__main__":
 	files = sorted([f for f in os.listdir('%s/output/monte_carlo' % WORKDIR) if re.match(reg_exp, f)])
 	print files
 
-	
 	for file in files:
 		try:
 			eta_true_arr,eta = read_to_array('%s/output/monte_carlo/%s' % (WORKDIR, file))

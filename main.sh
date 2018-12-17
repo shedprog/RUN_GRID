@@ -35,21 +35,21 @@ do
             ;;
 
         --tamplates | -ta)
-            executable="$executable; echo 'Load tamplates xfitter. Side:' $side"
-            executable="$executable; reload_tamplates_xfitter $side"
+            # executable="$executable; echo 'Load tamplates xfitter. Side:' $side"
+            # executable="$executable; reload_tamplates_xfitter $side"
             ;;
 
         --default_fit | -df)
-            # executable="$executable; echo 'Load tamplates xfitter. Side:' $side"
-            # executable="$executable; reload_tamplates_xfitter $side"
+            executable="$executable; echo 'Load tamplates xfitter. Side:' $side"
+            executable="$executable; reload_tamplates_xfitter $side"
             
             executable="$executable; echo 'Default fit'" 
             executable="$executable; default_fit"
             ;;
 
         --derivative | -de)
-            # executable="$executable; echo 'Load tamplates xfitter. Side:' $side"
-            # executable="$executable; reload_tamplates_xfitter $side"
+            executable="$executable; echo 'Load tamplates xfitter. Side:' $side"
+            executable="$executable; reload_tamplates_xfitter $side"
             
             executable="$executable; echo 'Build derivatives for SM, CI'"
             executable="$executable; build_deriv"
@@ -62,8 +62,8 @@ do
             ;;
 
         --monte_carlo | -mc)
-            # executable="$executable; echo 'Load tamplates xfitter. Side:' $side"
-            # executable="$executable; reload_tamplates_xfitter $side"
+            executable="$executable; echo 'Load tamplates xfitter. Side:' $side"
+            executable="$executable; reload_tamplates_xfitter $side"
 
             executable="$executable; echo 'Monte Carlo'"
             executable="$executable; monte_carlo_freq_updated $ci_mode $side"
